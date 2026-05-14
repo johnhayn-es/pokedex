@@ -1,0 +1,25 @@
+{
+  "name": "Skye Wildlife",
+  "short_name": "Skye Wildlife",
+  "description": "A field pokedex for spotting and logging Isle of Skye wildlife.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4ede4",
+  "theme_color": "#f4ede4",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23f4ede4' width='180' height='180'/><text x='50%25' y='50%25' font-size='110' text-anchor='middle' dominant-baseline='central'>🦅</text></svg>",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect fill='%23f4ede4' width='512' height='512'/><text x='50%25' y='50%25' font-size='320' text-anchor='middle' dominant-baseline='central'>🦅</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

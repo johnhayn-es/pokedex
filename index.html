@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Skye Wildlife">
+  <meta name="theme-color" content="#f4ede4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1c1917" media="(prefers-color-scheme: dark)">
+  <title>Skye Wildlife</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23f4ede4' width='180' height='180'/><text x='50%' y='50%' font-size='110' text-anchor='middle' dominant-baseline='central'>🦅</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23f4ede4' width='180' height='180'/><text x='50%' y='50%' font-size='110' text-anchor='middle' dominant-baseline='central'>🦅</text></svg>">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap');
+    :root {
+      --bg: #f4ede4;
+      --surface: #fbf8f4;
+      --surface-2: #efe9dd;
+      --ink: #1c1917;
+      --ink-2: #44403c;
+      --ink-3: #57534e;
+      --ink-4: #78716c;
+      --line: #e7e2d8;
+      --line-2: #efe9dd;
+      --accent: #166534;        /* deep moss green */
+      --accent-2: #14532d;
+      --accent-soft: #dcfce7;
+      --warn: #b91c1c;
+      --inverse: #fbf8f4;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1917;
+        --surface: #292524;
+        --surface-2: #1c1917;
+        --ink: #fafaf9;
+        --ink-2: #d6d3d1;
+        --ink-3: #a8a29e;
+        --ink-4: #78716c;
+        --line: #44403c;
+        --line-2: #292524;
+        --accent: #86efac;
+        --accent-2: #4ade80;
+        --accent-soft: #14532d;
+        --warn: #fca5a5;
+        --inverse: #1c1917;
+      }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Lexend', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-size: 16px;
+      line-height: 1.55;
+      letter-spacing: 0.005em;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    input, button, select, textarea { font-family: inherit; letter-spacing: inherit; color: inherit; }
+    input, textarea { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 16px; width: 100%; }
+    input:focus, textarea:focus { outline: none; border-color: var(--accent); }
+    h1, h2, h3 { font-family: inherit; font-weight: 700; letter-spacing: 0; line-height: 1.2; }
+    em, i { font-style: normal; font-weight: 600; }
+    ::-webkit-scrollbar { display: none; }
+    * { scrollbar-width: none; }
+    button { transition: transform 0.1s ease, opacity 0.1s ease, background 0.15s ease; cursor: pointer; border: none; background: none; }
+    button:active { transform: scale(0.97); opacity: 0.85; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+      button:active { transform: none; }
+    }
+
+    /* Layout primitives */
+    .app { max-width: 720px; margin: 0 auto; padding: 0 16px 96px; }
+    .header { padding: 16px 0 8px; display: flex; align-items: center; gap: 12px; }
+    .header h1 { font-size: 22px; font-weight: 700; }
+    .header .sub { font-size: 13px; color: var(--ink-3); }
+    .tabs {
+      display: flex; gap: 4px; padding: 4px;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      margin: 12px 0 16px; position: sticky; top: 8px; z-index: 5;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .tab {
+      flex: 1; padding: 9px 12px; border-radius: 9px; font-size: 14px; font-weight: 500;
+      color: var(--ink-3); background: transparent;
+    }
+    .tab.active { background: var(--ink); color: var(--inverse); }
+
+    /* Cards & chips */
+    .card:not(img):not(.species-photo):not(.species-emoji) { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+    /* Belt-and-braces reset for our photo classes in case anything else inherits */
+    .species-photo, .species-emoji { padding: 0; border-radius: 0; border: 0; background: transparent; }
+    .stack > * + * { margin-top: 10px; }
+    .row { display: flex; align-items: center; gap: 10px; }
+    .grow { flex: 1; min-width: 0; }
+    .muted { color: var(--ink-3); font-size: 13px; }
+
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 11px; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--line);
+      font-size: 13px; font-weight: 500; color: var(--ink-2);
+    }
+    .chip.active { background: var(--accent); color: var(--inverse); border-color: var(--accent); }
+    .chip .x { font-size: 14px; opacity: 0.75; margin-left: 2px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    /* Wizard option grid */
+    .options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .options.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    @media (min-width: 480px) { .options { grid-template-columns: repeat(3, 1fr); } .options.cols-3 { grid-template-columns: repeat(4, 1fr); } }
+    .option {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 14px 10px; border-radius: 12px;
+      background: var(--surface); border: 1px solid var(--line);
+      text-align: center; color: var(--ink); font-weight: 500; font-size: 14px;
+      min-height: 86px; justify-content: center;
+    }
+    .option .e { font-size: 24px; line-height: 1; }
+    .option .swatch { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line-2); }
+    .option .hint { font-size: 11px; color: var(--ink-4); font-weight: 400; }
+    .option.selected { border-color: var(--accent); background: var(--accent-soft); }
+
+    /* Species grid */
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    @media (min-width: 600px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+    .species-card {
+      display: flex; flex-direction: column; align-items: stretch;
+      padding: 0; border-radius: 14px; overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      text-align: left;
+    }
+    .species-card .photo-wrap {
+      width: 100%; aspect-ratio: 1/1;
+      background: var(--surface-2);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .species-card .species-photo.card {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: center 30%;   /* bias toward the head */
+      display: block;
+    }
+    .species-card .species-emoji.card { font-size: 40px; line-height: 1; opacity: 0.5; }
+    .species-card .text { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 2px; }
+    .species-card .name { font-weight: 600; font-size: 15px; }
+    .species-card .latin { font-size: 11px; color: var(--ink-4); }
+    .modal .hero {
+      width: 100%;
+      background: var(--surface-2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; min-height: 200px;
+    }
+    .modal .species-photo.hero { width: 100%; height: auto; display: block; }
+    .modal .species-emoji.hero { font-size: 96px; opacity: 0.6; padding: 40px 0; }
+    .log-thumb { width: 56px; height: 56px; border-radius: 10px; overflow: hidden; background: var(--surface-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .log-thumb .species-photo.card { width: 100%; height: 100%; object-fit: cover; }
+    .log-thumb .species-emoji.card { font-size: 28px; }
+    .sighting .thumb .species-photo.card { width: 100%; height: 100%; object-fit: cover; }
+    .sighting .thumb .species-emoji.card { font-size: 28px; }
+    .species-card.seen { box-shadow: inset 0 0 0 2px var(--accent); }
+    .species-card .seen-dot {
+      position: absolute; right: 10px; top: 10px;
+      width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+    }
+    .species-card { position: relative; }
+
+    /* Primary action button */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 16px; border-radius: 12px;
+      background: var(--ink); color: var(--inverse);
+      font-weight: 600; font-size: 15px; width: 100%;
+    }
+    .btn.secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+    .btn.ghost { background: transparent; color: var(--ink-2); }
+    .btn.danger { background: transparent; color: var(--warn); border: 1px solid var(--line); }
+    .btn.accent { background: var(--accent); color: var(--inverse); }
+    .btn:disabled { opacity: 0.4; }
+
+    /* Step header */
+    .step-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .step-q { font-size: 18px; font-weight: 600; }
+    .step-n { font-size: 12px; color: var(--ink-4); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+
+    /* Modal — full-screen, structured like an expanded card */
+    .modal-wrap {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; align-items: stretch; justify-content: center;
+      z-index: 100;
+      animation: fadein 0.15s ease;
+    }
+    @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+    .modal {
+      background: var(--bg); width: 100%; max-width: 720px;
+      height: 100vh; height: 100dvh;
+      overflow-y: auto;
+      animation: slideup 0.22s ease;
+      display: flex; flex-direction: column;
+    }
+    @keyframes slideup { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal .close-btn {
+      position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 14px;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(0,0,0,0.55); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; line-height: 1; font-weight: 600;
+      z-index: 2; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .modal .modal-body { padding: 16px 16px calc(24px + env(safe-area-inset-bottom)); }
+    .modal h2 { font-size: 26px; margin-bottom: 4px; }
+    .modal .latin-row { font-size: 14px; color: var(--ink-4); margin-bottom: 14px; }
+    .modal .field-label { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; display: block; }
+    .modal .desc { font-size: 16px; color: var(--ink-2); margin: 10px 0 14px; line-height: 1.6; }
+    .modal .where, .modal .fact { font-size: 14px; color: var(--ink-2); padding: 12px 14px; background: var(--surface); border-radius: 12px; border: 1px solid var(--line); margin-bottom: 10px; }
+    .modal .where strong, .modal .fact strong { display: block; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 4px; }
+
+    /* Sightings */
+    .sighting { display: flex; gap: 12px; padding: 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+    .sighting .thumb { width: 56px; height: 56px; border-radius: 10px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 28px; overflow: hidden; }
+    .sighting .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .sighting .meta { font-size: 12px; color: var(--ink-3); }
+    .sighting .notes { font-size: 13px; color: var(--ink-2); margin-top: 4px; font-style: normal; }
+
+    /* Photo input */
+    .photo-input { display: block; position: relative; aspect-ratio: 4/3; background: var(--surface); border: 1px dashed var(--line); border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; }
+    .photo-input img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-input .placeholder { text-align: center; color: var(--ink-3); font-size: 14px; padding: 16px; }
+    .photo-input .placeholder .e { font-size: 36px; display: block; margin-bottom: 6px; }
+    .photo-input input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .photo-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+    /* GPS button states */
+    .gps-status { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
+    .gps-status.ok { color: var(--accent-2); }
+
+    /* Empty states */
+    .empty { text-align: center; padding: 40px 20px; color: var(--ink-3); }
+    .empty .e { font-size: 48px; margin-bottom: 8px; }
+
+    /* Header settings button */
+    .settings-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--surface); color: var(--ink-2);
+      font-size: 18px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Logger chip + sync indicator on sightings */
+    .logger-chip {
+      display: inline-block; padding: 1px 7px; border-radius: 4px;
+      background: var(--accent-soft); color: var(--accent-2);
+      font-size: 11px; font-weight: 600; margin-right: 6px; vertical-align: 1px;
+    }
+    .sync-dot { display: inline-block; margin-left: 6px; font-size: 11px; opacity: 0.6; }
+    .sync-dot.synced { color: var(--accent-2); }
+    .sync-dot.pending { color: var(--ink-3); }
+
+    /* Code styling in settings text */
+    code { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 90%; padding: 1px 5px; background: var(--surface); border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+  <script src="species.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useRef, useCallback } = React;
+    const SPECIES = window.SPECIES;
+    const C = window.CHARACTERISTICS;
+
+    // ── Supabase config ───────────────────────────────────────────
+    const SUPABASE_URL = 'https://xsdpksbjzhhywtvxnite.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_1Q8FuEp-s9oZKgBTiqXBLA_GZVcff82';
+    const PHOTO_BUCKET = 'sighting-photos';
+    const DEFAULT_TRIP = 'skye-2026';
+
+    // ── IndexedDB sightings store ─────────────────────────────────
+    const DB_NAME = 'skye-wildlife';
+    const STORE = 'sightings';
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = e => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE, { keyPath: 'id' });
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+    async function dbAll() {
+      const db = await openDB();
+      return new Promise((res, rej) => {
+        const tx = db.transaction(STORE, 'readonly');
+        const req = tx.objectStore(STORE).getAll();
+        req.onsuccess = () => res(req.result || []);
+        req.onerror = () => rej(req.error);
+      });
+    }
+    async function dbPut(item) {
+      const db = await openDB();
+      return new Promise((res, rej) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).put(item);
+        tx.oncomplete = () => res();
+        tx.onerror = () => rej(tx.error);
+      });
+    }
+    async function dbDel(id) {
+      const db = await openDB();
+      return new Promise((res, rej) => {
+        const tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).delete(id);
+        tx.oncomplete = () => res();
+        tx.onerror = () => rej(tx.error);
+      });
+    }
+
+    // ── Supabase REST helpers ─────────────────────────────────────
+    // Local-first model: every sighting is saved to IndexedDB instantly. A
+    // background task pushes the photo + row to Supabase when there's signal.
+    const supaHeaders = (extra = {}) => ({
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      ...extra,
+    });
+
+    async function supaUploadPhoto(tripCode, id, blob) {
+      const path = `${tripCode}/${id}.jpg`;
+      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/${PHOTO_BUCKET}/${path}`, {
+        method: 'POST',
+        headers: supaHeaders({ 'Content-Type': 'image/jpeg', 'x-upsert': 'true' }),
+        body: blob,
+      });
+      if (!res.ok) throw new Error('upload failed: ' + res.status + ' ' + await res.text());
+      return path;
+    }
+
+    function supaPhotoUrl(path) {
+      return `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/${path}`;
+    }
+
+    async function supaUpsertSighting(row) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/sightings`, {
+        method: 'POST',
+        headers: supaHeaders({ 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' }),
+        body: JSON.stringify(row),
+      });
+      if (!res.ok) throw new Error('upsert failed: ' + res.status + ' ' + await res.text());
+    }
+
+    async function supaFetchTrip(tripCode) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/sightings?trip_code=eq.${encodeURIComponent(tripCode)}&order=date_iso.desc`, {
+        headers: supaHeaders(),
+      });
+      if (!res.ok) throw new Error('fetch failed: ' + res.status);
+      return res.json();
+    }
+
+    async function supaDeleteSighting(id) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/sightings?id=eq.${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: supaHeaders(),
+      });
+      if (!res.ok) throw new Error('delete failed: ' + res.status);
+    }
+
+    // ── Settings (just the logger's name) ─────────────────────────
+    const SETTINGS_KEY = 'skye-settings-v1';
+    const SHARED_TRIP = DEFAULT_TRIP; // single shared pool — no per-trip code surfaced in UI
+    function loadSettings() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+        return { logger: raw.logger || '', tripCode: SHARED_TRIP };
+      } catch { return { logger: '', tripCode: SHARED_TRIP }; }
+    }
+    function saveSettings(s) {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ logger: s.logger }));
+    }
+
+    // ── Photo compression ─────────────────────────────────────────
+    async function compressPhoto(file, maxSide = 1400, quality = 0.82) {
+      const url = URL.createObjectURL(file);
+      try {
+        const img = await new Promise((res, rej) => {
+          const i = new Image();
+          i.onload = () => res(i);
+          i.onerror = rej;
+          i.src = url;
+        });
+        const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+        const w = Math.round(img.naturalWidth * scale);
+        const h = Math.round(img.naturalHeight * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        return await new Promise(res => canvas.toBlob(res, 'image/jpeg', quality));
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    // ── Wikipedia thumbnail loader ────────────────────────────────
+    // Pulls a reference photo per species from the Wikipedia REST summary endpoint.
+    // URLs are cached in localStorage; the actual JPEGs are cached by the service worker.
+    const PHOTO_CACHE_KEY = 'skye-photo-urls-v1';
+    function loadPhotoCache() {
+      try { return JSON.parse(localStorage.getItem(PHOTO_CACHE_KEY) || '{}'); }
+      catch { return {}; }
+    }
+    function savePhotoCache(map) {
+      try { localStorage.setItem(PHOTO_CACHE_KEY, JSON.stringify(map)); } catch {}
+    }
+    const photoUrlMap = loadPhotoCache();
+    const photoInFlight = new Map();
+
+    async function fetchSpeciesPhoto(speciesId) {
+      if (photoUrlMap[speciesId]) return photoUrlMap[speciesId];
+      if (photoUrlMap[speciesId] === null) return null;
+      if (photoInFlight.has(speciesId)) return photoInFlight.get(speciesId);
+      const slug = window.WIKI_SLUGS?.[speciesId];
+      if (!slug) { photoUrlMap[speciesId] = null; savePhotoCache(photoUrlMap); return null; }
+      const p = (async () => {
+        try {
+          const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${slug}`);
+          if (!res.ok) throw new Error('http ' + res.status);
+          const data = await res.json();
+          const url = data.thumbnail?.source || null;
+          photoUrlMap[speciesId] = url;
+          savePhotoCache(photoUrlMap);
+          return url;
+        } catch {
+          photoUrlMap[speciesId] = null;
+          savePhotoCache(photoUrlMap);
+          return null;
+        } finally {
+          photoInFlight.delete(speciesId);
+        }
+      })();
+      photoInFlight.set(speciesId, p);
+      return p;
+    }
+
+    function SpeciesPhoto({ species, variant = 'card' }) {
+      const cached = photoUrlMap[species.id];
+      const [url, setUrl] = useState(cached || null);
+      const [errored, setErrored] = useState(false);
+      useEffect(() => {
+        let cancelled = false;
+        if (url === null && cached !== null) {
+          fetchSpeciesPhoto(species.id).then(u => { if (!cancelled) setUrl(u); });
+        }
+        return () => { cancelled = true; };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [species.id]);
+      const src = url;
+      if (!src || errored) {
+        return <span className={`species-emoji ${variant}`} aria-hidden>{species.emoji}</span>;
+      }
+      return <img className={`species-photo ${variant}`} src={src} alt={species.name} loading="lazy" onError={() => setErrored(true)} />;
+    }
+
+    async function preloadAllPhotos(onProgress) {
+      const ids = SPECIES.map(s => s.id);
+      let done = 0;
+      for (const id of ids) {
+        await fetchSpeciesPhoto(id);
+        const url = photoUrlMap[id];
+        // Force-prime the SW cache by fetching the image bytes (both card and hero size)
+        try { if (url) await fetch(url).catch(() => {}); } catch {}
+        done++;
+        onProgress?.(done, ids.length);
+      }
+    }
+
+    // ── Filter logic ──────────────────────────────────────────────
+    function matchesFilter(s, f) {
+      if (f.group && s.group !== f.group) return false;
+      if (f.habitats.size && ![...f.habitats].some(h => s.habitats.includes(h))) return false;
+      if (f.sizes.size && !f.sizes.has(s.size)) return false;
+      if (f.colours.size && ![...f.colours].some(c => s.colours.includes(c))) return false;
+      if (f.features.size && ![...f.features].every(ft => s.features.includes(ft))) return false;
+      return true;
+    }
+    function emptyFilter() {
+      return { group: null, habitats: new Set(), sizes: new Set(), colours: new Set(), features: new Set() };
+    }
+    function filterCount(f) {
+      return (f.group ? 1 : 0) + f.habitats.size + f.sizes.size + f.colours.size + f.features.size;
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────
+    const fmtDate = iso => {
+      const d = new Date(iso);
+      return d.toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    };
+    const speciesById = id => SPECIES.find(s => s.id === id);
+    const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+    // ── Top tab bar ───────────────────────────────────────────────
+    function Tabs({ view, setView, sightingCount }) {
+      return (
+        <nav className="tabs">
+          {[
+            { k: 'identify', label: 'Identify' },
+            { k: 'browse', label: 'Browse' },
+            { k: 'sightings', label: `Sightings${sightingCount ? ` · ${sightingCount}` : ''}` },
+          ].map(t => (
+            <button key={t.k} className={`tab ${view === t.k ? 'active' : ''}`} onClick={() => setView(t.k)}>
+              {t.label}
+            </button>
+          ))}
+        </nav>
+      );
+    }
+
+    // ── Identify wizard ───────────────────────────────────────────
+    function IdentifyView({ filter, setFilter, onShowMatches, matchCount }) {
+      // The wizard advances based on what the filter has answered.
+      const stepDone = {
+        group: !!filter.group,
+        habitat: filter.habitats.size > 0,
+        size: filter.sizes.size > 0,
+        colour: filter.colours.size > 0,
+      };
+      const allDone = stepDone.group && stepDone.habitat && stepDone.size && stepDone.colour;
+
+      const toggleSet = (key, value) => {
+        const next = { ...filter, [key]: new Set(filter[key]) };
+        next[key].has(value) ? next[key].delete(value) : next[key].add(value);
+        setFilter(next);
+      };
+      const setGroup = g => setFilter({ ...filter, group: filter.group === g ? null : g });
+
+      return (
+        <div className="stack">
+          {/* Current filter chips */}
+          {filterCount(filter) > 0 && (
+            <div className="chips">
+              {filter.group && (
+                <button className="chip active" onClick={() => setFilter({ ...filter, group: null })}>
+                  {C.groups.find(g => g.key === filter.group)?.emoji} {C.groups.find(g => g.key === filter.group)?.label}
+                  <span className="x">×</span>
+                </button>
+              )}
+              {[...filter.habitats].map(h => {
+                const o = C.habitats.find(x => x.key === h);
+                return <button key={h} className="chip active" onClick={() => toggleSet('habitats', h)}>{o.emoji} {o.label}<span className="x">×</span></button>;
+              })}
+              {[...filter.sizes].map(s => {
+                const o = C.sizes.find(x => x.key === s);
+                return <button key={s} className="chip active" onClick={() => toggleSet('sizes', s)}>{o.label}<span className="x">×</span></button>;
+              })}
+              {[...filter.colours].map(c => {
+                const o = C.colours.find(x => x.key === c);
+                return <button key={c} className="chip active" onClick={() => toggleSet('colours', c)}>{o.label}<span className="x">×</span></button>;
+              })}
+              {[...filter.features].map(f => {
+                const o = C.features.find(x => x.key === f);
+                return <button key={f} className="chip active" onClick={() => toggleSet('features', f)}>{o.label}<span className="x">×</span></button>;
+              })}
+              <button className="chip" onClick={() => setFilter(emptyFilter())}>Reset all</button>
+            </div>
+          )}
+
+          {/* Step 1: group */}
+          <Section
+            done={stepDone.group}
+            q="What kind of creature?"
+            step="Step 1 of 4"
+          >
+            <div className="options cols-3">
+              {C.groups.map(g => (
+                <button key={g.key} className={`option ${filter.group === g.key ? 'selected' : ''}`} onClick={() => setGroup(g.key)}>
+                  <span className="e">{g.emoji}</span>
+                  <span>{g.label}</span>
+                </button>
+              ))}
+            </div>
+          </Section>
+
+          {/* Step 2: habitat */}
+          {stepDone.group && (
+            <Section
+              done={stepDone.habitat}
+              q="Where did you see it?"
+              step="Step 2 of 4"
+              hint="Tap any that apply"
+            >
+              <div className="options cols-3">
+                {C.habitats.map(h => (
+                  <button key={h.key} className={`option ${filter.habitats.has(h.key) ? 'selected' : ''}`} onClick={() => toggleSet('habitats', h.key)}>
+                    <span className="e">{h.emoji}</span>
+                    <span>{h.label}</span>
+                  </button>
+                ))}
+              </div>
+            </Section>
+          )}
+
+          {/* Step 3: size */}
+          {stepDone.habitat && (
+            <Section
+              done={stepDone.size}
+              q="How big was it?"
+              step="Step 3 of 4"
+              hint="Tap any that fit"
+            >
+              <div className="options">
+                {C.sizes.map(s => (
+                  <button key={s.key} className={`option ${filter.sizes.has(s.key) ? 'selected' : ''}`} onClick={() => toggleSet('sizes', s.key)}>
+                    <span style={{fontWeight:600}}>{s.label}</span>
+                    <span className="hint">{s.hint}</span>
+                  </button>
+                ))}
+              </div>
+            </Section>
+          )}
+
+          {/* Step 4: colour */}
+          {stepDone.size && (
+            <Section
+              done={stepDone.colour}
+              q="Main colour?"
+              step="Step 4 of 4"
+              hint="Tap any that apply"
+            >
+              <div className="options cols-3">
+                {C.colours.map(c => (
+                  <button key={c.key} className={`option ${filter.colours.has(c.key) ? 'selected' : ''}`} onClick={() => toggleSet('colours', c.key)}>
+                    <span className="swatch" style={{background: c.swatch}}></span>
+                    <span>{c.label}</span>
+                  </button>
+                ))}
+              </div>
+            </Section>
+          )}
+
+          {/* Optional: features */}
+          {allDone && (
+            <Section q="Any of these features?" step="Optional refinement" hint="Useful when the list is still long">
+              <div className="chips">
+                {C.features.map(f => (
+                  <button key={f.key} className={`chip ${filter.features.has(f.key) ? 'active' : ''}`} onClick={() => toggleSet('features', f.key)}>
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </Section>
+          )}
+
+          {/* Show matches CTA — always visible after step 1 */}
+          {filter.group && (
+            <button className="btn accent" onClick={onShowMatches}>
+              Show {matchCount} {matchCount === 1 ? 'match' : 'matches'} →
+            </button>
+          )}
+        </div>
+      );
+    }
+
+    function Section({ q, step, hint, children, done }) {
+      return (
+        <section className="card">
+          <div className="step-h">
+            <span className="step-q">{q}</span>
+            <span className="step-n">{step}</span>
+          </div>
+          {hint && <p className="muted" style={{marginBottom:10}}>{hint}</p>}
+          {children}
+        </section>
+      );
+    }
+
+    // ── Browse view ───────────────────────────────────────────────
+    function BrowseView({ filter, setFilter, onSelect, sightingCounts }) {
+      const matches = useMemo(() => SPECIES.filter(s => matchesFilter(s, filter)), [filter]);
+      return (
+        <div className="stack">
+          {filterCount(filter) > 0 && (
+            <div className="chips">
+              <span className="muted" style={{alignSelf:'center', marginRight:4}}>Filtered:</span>
+              {filter.group && (
+                <button className="chip active" onClick={() => setFilter({ ...filter, group: null })}>
+                  {C.groups.find(g => g.key === filter.group)?.label} <span className="x">×</span>
+                </button>
+              )}
+              {[...filter.habitats, ...filter.sizes, ...filter.colours, ...filter.features].map(k => {
+                const o = [...C.habitats, ...C.sizes, ...C.colours, ...C.features].find(x => x.key === k);
+                return o ? <button key={k} className="chip active" onClick={() => {
+                  const next = { ...filter };
+                  ['habitats','sizes','colours','features'].forEach(d => {
+                    if (next[d].has(k)) { next[d] = new Set(next[d]); next[d].delete(k); }
+                  });
+                  setFilter(next);
+                }}>{o.label}<span className="x">×</span></button> : null;
+              })}
+              <button className="chip" onClick={() => setFilter(emptyFilter())}>Clear</button>
+            </div>
+          )}
+
+          {matches.length === 0 ? (
+            <div className="empty">
+              <div className="e">🤔</div>
+              <p>No matches with that combination.</p>
+              <p className="muted">Try removing a filter.</p>
+            </div>
+          ) : (
+            <div className="grid">
+              {matches.map(s => (
+                <button key={s.id} className={`species-card ${sightingCounts[s.id] ? 'seen' : ''}`} onClick={() => onSelect(s.id)}>
+                  {sightingCounts[s.id] ? <span className="seen-dot" title={`${sightingCounts[s.id]} sighting${sightingCounts[s.id]===1?'':'s'}`}></span> : null}
+                  <div className="photo-wrap"><SpeciesPhoto species={s} variant="card" /></div>
+                  <div className="text">
+                    <span className="name">{s.name}</span>
+                    <span className="latin">{s.latin}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ── Sightings list ────────────────────────────────────────────
+    function PreloadButton() {
+      const [progress, setProgress] = useState(null);
+      const total = SPECIES.length;
+      const run = async () => {
+        setProgress(0);
+        await preloadAllPhotos(d => setProgress(d));
+        setProgress('done');
+        setTimeout(() => setProgress(null), 2000);
+      };
+      const label = progress === null
+        ? `Download all reference photos for offline use`
+        : progress === 'done'
+        ? `All photos cached ✓`
+        : `Caching photos… ${progress}/${total}`;
+      return <button className="btn secondary" onClick={run} disabled={progress !== null && progress !== 'done'}>{label}</button>;
+    }
+
+    function SightingsView({ sightings, onOpenSpecies, onDelete }) {
+      const sorted = useMemo(
+        () => [...sightings].sort((a, b) => b.dateISO.localeCompare(a.dateISO)),
+        [sightings]
+      );
+      if (sorted.length === 0) {
+        return (
+          <div className="stack">
+            <div className="empty">
+              <div className="e">📓</div>
+              <p style={{fontWeight:600, color:'var(--ink-2)'}}>No sightings yet</p>
+              <p className="muted">Open a species and tap "Log a sighting" to start your trip journal.</p>
+            </div>
+            <PreloadButton />
+          </div>
+        );
+      }
+      return (
+        <div className="stack">
+          {sorted.map(g => {
+            const sp = speciesById(g.speciesId);
+            return (
+              <div key={g.id} className="sighting">
+                <div className="thumb">
+                  {g.photoBlob
+                    ? <PhotoThumb blob={g.photoBlob} />
+                    : g.photoPath
+                    ? <img src={supaPhotoUrl(g.photoPath)} alt="" loading="lazy" />
+                    : (sp ? <SpeciesPhoto species={sp} variant="card" /> : <span>❓</span>)}
+                </div>
+                <div className="grow">
+                  <div className="row" style={{justifyContent:'space-between'}}>
+                    <button onClick={() => onOpenSpecies(g.speciesId)} style={{textAlign:'left', fontWeight:600, padding:0, background:'none'}}>
+                      {sp?.name || 'Unknown'}
+                    </button>
+                    <button onClick={() => onDelete(g.id)} className="muted" style={{padding:'2px 6px', fontSize:12}}>Delete</button>
+                  </div>
+                  <div className="meta">
+                    {g.logger && <span className="logger-chip">{g.logger}</span>}
+                    {fmtDate(g.dateISO)}
+                    {g.lat != null && (
+                      <> · <a href={`https://maps.apple.com/?q=${g.lat},${g.lon}`} target="_blank" rel="noreferrer" style={{color:'inherit'}}>
+                        {g.lat.toFixed(4)}, {g.lon.toFixed(4)}
+                      </a></>
+                    )}
+                    <SyncDot state={g.syncState} />
+                  </div>
+                  {g.notes && <div className="notes">{g.notes}</div>}
+                </div>
+              </div>
+            );
+          })}
+          <PreloadButton />
+        </div>
+      );
+    }
+
+    function SyncDot({ state }) {
+      if (state === 'synced') return <span className="sync-dot synced" title="Synced">☁</span>;
+      if (state === 'pending') return <span className="sync-dot pending" title="Queued to sync">⏳</span>;
+      return null;
+    }
+
+    function PhotoThumb({ blob }) {
+      const [src, setSrc] = useState(null);
+      useEffect(() => {
+        const url = URL.createObjectURL(blob);
+        setSrc(url);
+        return () => URL.revokeObjectURL(url);
+      }, [blob]);
+      return src ? <img src={src} alt="" /> : null;
+    }
+
+    // ── Species detail modal ──────────────────────────────────────
+    function SpeciesModal({ species, sightings, onClose, onLog }) {
+      const own = sightings.filter(s => s.speciesId === species.id);
+      return (
+        <div className="modal-wrap">
+          <div className="modal">
+            <button className="close-btn" onClick={onClose} aria-label="Close">×</button>
+            <div className="hero"><SpeciesPhoto species={species} variant="hero" /></div>
+            <div className="modal-body">
+              <h2>{species.name}</h2>
+              <div className="latin-row">{species.latin}</div>
+              <p className="desc">{species.description}</p>
+              <div className="where"><strong>Where to look</strong>{species.where}</div>
+              <div className="fact"><strong>Did you know</strong>{species.fact}</div>
+              <div style={{marginTop: 14}} className="stack">
+                <button className="btn accent" onClick={onLog}>
+                  {own.length ? `Log another sighting (${own.length} so far)` : 'Log a sighting'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Log-a-sighting form ───────────────────────────────────────
+    function LogModal({ species, onClose, onSave }) {
+      const [dateISO, setDateISO] = useState(() => {
+        const d = new Date();
+        d.setSeconds(0, 0);
+        return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      });
+      const [notes, setNotes] = useState('');
+      const [coords, setCoords] = useState(null); // {lat, lon, accuracy}
+      const [gpsState, setGpsState] = useState('idle'); // idle | locating | error
+      const [photoBlob, setPhotoBlob] = useState(null);
+      const [photoUrl, setPhotoUrl] = useState(null);
+      const [saving, setSaving] = useState(false);
+
+      useEffect(() => {
+        // Auto-capture GPS on open if available.
+        captureGps();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+      useEffect(() => () => { if (photoUrl) URL.revokeObjectURL(photoUrl); }, [photoUrl]);
+
+      const captureGps = () => {
+        if (!navigator.geolocation) { setGpsState('error'); return; }
+        setGpsState('locating');
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude, accuracy: pos.coords.accuracy });
+            setGpsState('ok');
+          },
+          () => setGpsState('error'),
+          { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+        );
+      };
+
+      const onPhotoPick = async e => {
+        const f = e.target.files?.[0];
+        if (!f) return;
+        const blob = await compressPhoto(f);
+        if (photoUrl) URL.revokeObjectURL(photoUrl);
+        setPhotoBlob(blob);
+        setPhotoUrl(URL.createObjectURL(blob));
+      };
+
+      const submit = async () => {
+        setSaving(true);
+        await onSave({
+          id: uid(),
+          speciesId: species.id,
+          dateISO: new Date(dateISO).toISOString(),
+          lat: coords?.lat ?? null,
+          lon: coords?.lon ?? null,
+          accuracy: coords?.accuracy ?? null,
+          notes: notes.trim(),
+          photoBlob,
+        });
+        setSaving(false);
+        onClose();
+      };
+
+      return (
+        <div className="modal-wrap">
+          <div className="modal">
+            <button className="close-btn" onClick={onClose} aria-label="Close">×</button>
+            <div className="modal-body">
+            <div className="row" style={{gap:10, marginBottom: 12}}>
+              <div className="log-thumb"><SpeciesPhoto species={species} variant="card" /></div>
+              <div className="grow">
+                <h2 style={{fontSize:18}}>Log a {species.name}</h2>
+                <div className="latin-row" style={{margin:0}}>{species.latin}</div>
+              </div>
+            </div>
+
+            <div className="stack">
+              <div>
+                <label className="field-label">Photo</label>
+                <label className="photo-input">
+                  {photoUrl
+                    ? <img src={photoUrl} alt="preview" />
+                    : <div className="placeholder"><span className="e">📷</span>Tap to take or choose a photo</div>}
+                  <input type="file" accept="image/*" capture="environment" onChange={onPhotoPick} />
+                </label>
+                {photoBlob && (
+                  <button className="btn ghost" style={{marginTop:6, fontSize:13}} onClick={() => { setPhotoBlob(null); if (photoUrl) URL.revokeObjectURL(photoUrl); setPhotoUrl(null); }}>
+                    Remove photo
+                  </button>
+                )}
+              </div>
+
+              <div>
+                <label className="field-label">When</label>
+                <input type="datetime-local" value={dateISO} onChange={e => setDateISO(e.target.value)} />
+              </div>
+
+              <div>
+                <label className="field-label">Location</label>
+                {gpsState === 'ok' && coords ? (
+                  <div className="card" style={{padding:'10px 12px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                    <div>
+                      <div style={{fontSize:14, fontWeight:500}}>{coords.lat.toFixed(5)}, {coords.lon.toFixed(5)}</div>
+                      <div className="muted">±{Math.round(coords.accuracy)} m · <a target="_blank" rel="noreferrer" href={`https://maps.apple.com/?q=${coords.lat},${coords.lon}`} style={{color:'var(--accent)'}}>open in Maps</a></div>
+                    </div>
+                    <button className="btn ghost" style={{width:'auto', fontSize:13, padding:'6px 10px'}} onClick={captureGps}>Re-capture</button>
+                  </div>
+                ) : (
+                  <button className="btn secondary" onClick={captureGps} disabled={gpsState==='locating'}>
+                    {gpsState === 'locating' ? 'Locating…' : gpsState === 'error' ? 'Try again' : 'Capture GPS'}
+                  </button>
+                )}
+                {gpsState === 'error' && <div className="gps-status">Couldn't get GPS — you can still save without a location.</div>}
+              </div>
+
+              <div>
+                <label className="field-label">Notes</label>
+                <textarea rows={3} value={notes} onChange={e => setNotes(e.target.value)} placeholder="What it was doing, who was with you, anything memorable…" />
+              </div>
+
+              <div className="row" style={{gap: 8, marginTop: 4}}>
+                <button className="btn secondary" style={{flex:1}} onClick={onClose}>Cancel</button>
+                <button className="btn accent" style={{flex:2}} onClick={submit} disabled={saving}>
+                  {saving ? 'Saving…' : 'Save sighting'}
+                </button>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Settings modal ────────────────────────────────────────────
+    function SettingsModal({ settings, onClose, onSave }) {
+      const [logger, setLogger] = useState(settings.logger);
+      const dirty = logger.trim() && logger !== settings.logger;
+      return (
+        <div className="modal-wrap">
+          <div className="modal">
+            <button className="close-btn" onClick={onClose} aria-label="Close">×</button>
+            <div className="modal-body" style={{paddingTop: 60}}>
+              <h2>Your name</h2>
+              <div className="latin-row">So your sightings are tagged.</div>
+              <div className="stack" style={{marginTop:14}}>
+                <input value={logger} onChange={e => setLogger(e.target.value)} placeholder="e.g. John" maxLength={30} />
+                <button className="btn accent" disabled={!dirty} onClick={() => { onSave({ ...settings, logger: logger.trim() }); onClose(); }}>
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Root app ──────────────────────────────────────────────────
+    function App() {
+      const [view, setView] = useState('identify');
+      const [filter, setFilter] = useState(emptyFilter);
+      const [sightings, setSightings] = useState([]);
+      const [selectedId, setSelectedId] = useState(null);
+      const [loggingId, setLoggingId] = useState(null);
+      const [settings, setSettings] = useState(loadSettings);
+      const [settingsOpen, setSettingsOpen] = useState(false);
+      const [syncState, setSyncState] = useState('idle'); // idle | syncing | offline
+
+      // Initial load: pull local + remote, merge.
+      useEffect(() => {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('sw.js').catch(() => {});
+          // When a new SW takes over (skipWaiting + clients.claim), reload the
+          // page so the new shell is what the user sees — no manual refresh needed.
+          let reloaded = false;
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (reloaded) return;
+            reloaded = true;
+            window.location.reload();
+          });
+        }
+        (async () => {
+          const local = await dbAll().catch(() => []);
+          setSightings(local);
+          // Prompt for name on first launch
+          if (!settings.logger) setSettingsOpen(true);
+          await pullRemote(settings.tripCode);
+          // Retry any local-only sightings (left over from previous offline session)
+          for (const s of local) if (s.syncState !== 'synced') pushSighting(s).catch(() => {});
+        })();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+
+      // Refresh when tab becomes visible
+      useEffect(() => {
+        const onVis = () => { if (!document.hidden) pullRemote(settings.tripCode); };
+        document.addEventListener('visibilitychange', onVis);
+        const poll = setInterval(onVis, 30000);
+        return () => { document.removeEventListener('visibilitychange', onVis); clearInterval(poll); };
+      }, [settings.tripCode]);
+
+      // When trip code changes, repull
+      useEffect(() => {
+        if (settings.tripCode) pullRemote(settings.tripCode);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [settings.tripCode]);
+
+      async function pullRemote(tripCode) {
+        if (!tripCode) return;
+        setSyncState('syncing');
+        try {
+          const rows = await supaFetchTrip(tripCode);
+          // Merge remote into local. New remote rows are stored as remoteUrl-only (no blob).
+          const local = await dbAll().catch(() => []);
+          const localById = new Map(local.map(s => [s.id, s]));
+          const merged = [];
+          for (const row of rows) {
+            const existing = localById.get(row.id);
+            const rec = {
+              id: row.id,
+              tripCode: row.trip_code,
+              logger: row.logger,
+              speciesId: row.species_id,
+              dateISO: row.date_iso,
+              lat: row.lat,
+              lon: row.lon,
+              accuracy: row.accuracy,
+              notes: row.notes || '',
+              photoBlob: existing?.photoBlob || null,
+              photoPath: row.photo_path || null,
+              syncState: 'synced',
+            };
+            await dbPut(rec);
+            merged.push(rec);
+            localById.delete(row.id);
+          }
+          // Anything left in localById is local-only (not yet synced or different trip)
+          for (const stale of localById.values()) {
+            if (stale.tripCode === tripCode) merged.push(stale);
+          }
+          setSightings(merged);
+          setSyncState('idle');
+        } catch (e) {
+          console.warn('pullRemote failed', e);
+          setSyncState('offline');
+        }
+      }
+
+      async function pushSighting(s) {
+        if (s.syncState === 'synced') return;
+        try {
+          let photoPath = s.photoPath || null;
+          if (s.photoBlob && !photoPath) {
+            photoPath = await supaUploadPhoto(s.tripCode, s.id, s.photoBlob);
+          }
+          await supaUpsertSighting({
+            id: s.id,
+            trip_code: s.tripCode,
+            logger: s.logger,
+            species_id: s.speciesId,
+            date_iso: s.dateISO,
+            lat: s.lat,
+            lon: s.lon,
+            accuracy: s.accuracy,
+            notes: s.notes || null,
+            photo_path: photoPath,
+          });
+          const updated = { ...s, photoPath, syncState: 'synced' };
+          await dbPut(updated);
+          setSightings(prev => prev.map(x => x.id === s.id ? updated : x));
+        } catch (e) {
+          console.warn('pushSighting failed, will retry later', e);
+          const updated = { ...s, syncState: 'pending' };
+          await dbPut(updated);
+          setSightings(prev => prev.map(x => x.id === s.id ? updated : x));
+        }
+      }
+
+      const matches = useMemo(() => SPECIES.filter(s => matchesFilter(s, filter)), [filter]);
+      const sightingCounts = useMemo(() => {
+        const m = {};
+        for (const s of sightings) m[s.speciesId] = (m[s.speciesId] || 0) + 1;
+        return m;
+      }, [sightings]);
+
+      const saveSighting = async sighting => {
+        const enriched = {
+          ...sighting,
+          tripCode: settings.tripCode,
+          logger: settings.logger || 'Anon',
+          syncState: 'pending',
+          photoPath: null,
+        };
+        await dbPut(enriched);
+        setSightings(prev => [...prev.filter(s => s.id !== enriched.id), enriched]);
+        pushSighting(enriched);
+      };
+      const deleteSighting = async id => {
+        if (!confirm('Delete this sighting? It will be removed from both phones.')) return;
+        await dbDel(id);
+        setSightings(prev => prev.filter(s => s.id !== id));
+        supaDeleteSighting(id).catch(e => console.warn('remote delete failed', e));
+      };
+      const selected = selectedId ? speciesById(selectedId) : null;
+      const logging  = loggingId  ? speciesById(loggingId)  : null;
+
+      return (
+        <div className="app">
+          <header className="header">
+            <div style={{fontSize: 28, lineHeight: 1}}>🦅</div>
+            <div className="grow">
+              <h1>Skye Wildlife</h1>
+              <div className="sub">
+                {settings.logger || 'A field pokedex for your trip'}
+                {syncState === 'syncing' && ' · syncing…'}
+                {syncState === 'offline' && ' · offline'}
+              </div>
+            </div>
+            <button className="settings-btn" onClick={() => setSettingsOpen(true)} aria-label="Settings">⚙</button>
+          </header>
+
+          <Tabs view={view} setView={setView} sightingCount={sightings.length} />
+
+          {view === 'identify' && (
+            <IdentifyView
+              filter={filter}
+              setFilter={setFilter}
+              matchCount={matches.length}
+              onShowMatches={() => setView('browse')}
+            />
+          )}
+          {view === 'browse' && (
+            <BrowseView
+              filter={filter}
+              setFilter={setFilter}
+              sightingCounts={sightingCounts}
+              onSelect={setSelectedId}
+            />
+          )}
+          {view === 'sightings' && (
+            <SightingsView
+              sightings={sightings}
+              onOpenSpecies={setSelectedId}
+              onDelete={deleteSighting}
+            />
+          )}
+
+          {selected && (
+            <SpeciesModal
+              species={selected}
+              sightings={sightings}
+              onClose={() => setSelectedId(null)}
+              onLog={() => { setLoggingId(selected.id); setSelectedId(null); }}
+            />
+          )}
+          {logging && (
+            <LogModal
+              species={logging}
+              onClose={() => setLoggingId(null)}
+              onSave={saveSighting}
+            />
+          )}
+          {settingsOpen && (
+            <SettingsModal
+              settings={settings}
+              onClose={() => setSettingsOpen(false)}
+              onSave={s => { setSettings(s); saveSettings(s); }}
+            />
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
