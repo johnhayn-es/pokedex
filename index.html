@@ -260,6 +260,7 @@
     .modal {
       background: var(--bg); width: 100%; max-width: 720px;
       height: 100vh; height: 100dvh;
+      padding-top: env(safe-area-inset-top);
       overflow-y: auto;
       animation: slideup 0.22s ease;
       display: flex; flex-direction: column;
@@ -594,12 +595,7 @@
       useEffect(() => {
         let cancelled = false;
         fetchSpeciesGallery(species.id).then(arr => {
-          if (cancelled) return;
-          // Make sure the existing single thumbnail (already cached) is first if not in arr.
-          const main = photoUrlMap[species.id];
-          let combined = arr;
-          if (main && !arr.some(u => u === main)) combined = [main, ...arr];
-          setUrls(combined);
+          if (!cancelled) setUrls(arr);
         });
         return () => { cancelled = true; };
       }, [species.id]);
