@@ -261,7 +261,8 @@
       background: var(--bg); width: 100%; max-width: 720px;
       height: 100vh; height: 100dvh;
       padding-top: env(safe-area-inset-top);
-      overflow-y: auto;
+      overflow-x: hidden; overflow-y: auto;
+      overscroll-behavior: contain;
       animation: slideup 0.22s ease;
       display: flex; flex-direction: column;
     }
@@ -283,11 +284,25 @@
     .modal .where strong, .modal .fact strong { display: block; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 4px; }
 
     /* Sightings */
-    .sighting { display: flex; gap: 12px; padding: 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+    .sighting {
+      display: flex; gap: 12px; padding: 12px;
+      border-radius: 12px; background: var(--surface); border: 1px solid var(--line);
+      text-align: left; width: 100%; color: inherit; font: inherit;
+    }
+    .sighting:active { transform: scale(0.99); }
     .sighting .thumb { width: 56px; height: 56px; border-radius: 10px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 28px; overflow: hidden; }
     .sighting .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .sighting .sighting-title { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
     .sighting .meta { font-size: 12px; color: var(--ink-3); }
     .sighting .notes { font-size: 13px; color: var(--ink-2); margin-top: 4px; font-style: normal; }
+
+    /* Sighting detail modal */
+    .modal .user-photo-hero { width: 100%; height: auto; display: block; max-height: 60vh; object-fit: cover; }
+    .sighting-meta-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; color: var(--ink-3); font-size: 13px; }
+    .sighting-map {
+      width: 100%; height: 240px; border: 1px solid var(--line); border-radius: 12px;
+      margin-top: 6px; background: var(--surface);
+    }
 
     /* Photo input */
     .photo-input { display: block; position: relative; aspect-ratio: 4/3; background: var(--surface); border: 1px dashed var(--line); border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; }
@@ -907,7 +922,7 @@
       return <button className="btn secondary" onClick={run} disabled={progress !== null && progress !== 'done'}>{label}</button>;
     }
 
-    function SightingsView({ sightings, onOpenSpecies, onDelete }) {
+    function SightingsView({ sightings, onOpen }) {
       const sorted = useMemo(
         () => [...sightings].sort((a, b) => b.dateISO.localeCompare(a.dateISO)),
         [sightings]
@@ -929,7 +944,7 @@
           {sorted.map(g => {
             const sp = speciesById(g.speciesId);
             return (
-              <div key={g.id} className="sighting">
+              <button key={g.id} className="sighting" onClick={() => onOpen(g.id)}>
                 <div className="thumb">
                   {g.photoBlob
                     ? <PhotoThumb blob={g.photoBlob} />
@@ -938,25 +953,16 @@
                     : (sp ? <SpeciesPhoto species={sp} variant="card" /> : <span>❓</span>)}
                 </div>
                 <div className="grow">
-                  <div className="row" style={{justifyContent:'space-between'}}>
-                    <button onClick={() => onOpenSpecies(g.speciesId)} style={{textAlign:'left', fontWeight:600, padding:0, background:'none'}}>
-                      {sp?.name || 'Unknown'}
-                    </button>
-                    <button onClick={() => onDelete(g.id)} className="muted" style={{padding:'2px 6px', fontSize:12}}>Delete</button>
-                  </div>
+                  <div className="sighting-title">{sp?.name || 'Unknown'}</div>
                   <div className="meta">
                     {g.logger && <span className="logger-chip">{g.logger}</span>}
                     {fmtDate(g.dateISO)}
-                    {g.lat != null && (
-                      <> · <a href={`https://maps.apple.com/?q=${g.lat},${g.lon}`} target="_blank" rel="noreferrer" style={{color:'inherit'}}>
-                        {g.lat.toFixed(4)}, {g.lon.toFixed(4)}
-                      </a></>
-                    )}
+                    {g.lat != null && ' · 📍'}
                     <SyncDot state={g.syncState} />
                   </div>
                   {g.notes && <div className="notes">{g.notes}</div>}
                 </div>
-              </div>
+              </button>
             );
           })}
           <PreloadButton />
@@ -998,6 +1004,94 @@
                 <button className="btn accent" onClick={onLog}>
                   {own.length ? `Log another sighting (${own.length} so far)` : 'Log a sighting'}
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Sighting detail modal ─────────────────────────────────────
+    function useBlobUrl(blob) {
+      const [url, setUrl] = useState(null);
+      useEffect(() => {
+        if (!blob) { setUrl(null); return; }
+        const u = URL.createObjectURL(blob);
+        setUrl(u);
+        return () => URL.revokeObjectURL(u);
+      }, [blob]);
+      return url;
+    }
+
+    function SightingModal({ sighting, onClose, onDelete, onOpenSpecies }) {
+      const sp = speciesById(sighting.speciesId);
+      const blobUrl = useBlobUrl(sighting.photoBlob);
+      const userPhotoSrc = blobUrl || (sighting.photoPath ? supaPhotoUrl(sighting.photoPath) : null);
+      const hasLocation = sighting.lat != null && sighting.lon != null;
+
+      const handleDelete = async () => {
+        if (!confirm('Delete this sighting? It will be removed from both phones.')) return;
+        await onDelete(sighting.id);
+        onClose();
+      };
+
+      // Build an OSM embed bbox roughly ~500m around the point.
+      const bbox = hasLocation
+        ? [sighting.lon - 0.005, sighting.lat - 0.0025, sighting.lon + 0.005, sighting.lat + 0.0025].join(',')
+        : null;
+
+      return (
+        <div className="modal-wrap">
+          <div className="modal">
+            <button className="close-btn" onClick={onClose} aria-label="Close">×</button>
+            {userPhotoSrc ? (
+              <div className="hero">
+                <img src={userPhotoSrc} alt="" className="user-photo-hero" />
+              </div>
+            ) : sp ? (
+              <div className="hero"><HeroGallery species={sp} /></div>
+            ) : null}
+            <div className="modal-body">
+              <h2>{sp?.name || 'Unknown species'}</h2>
+              {sp && <div className="latin-row">{sp.latin}</div>}
+
+              <div className="sighting-meta-row">
+                {sighting.logger && <span className="logger-chip">{sighting.logger}</span>}
+                <span>{fmtDate(sighting.dateISO)}</span>
+                <SyncDot state={sighting.syncState} />
+              </div>
+
+              {sighting.notes && (
+                <div className="where" style={{marginTop:14}}>
+                  <strong>Notes</strong>{sighting.notes}
+                </div>
+              )}
+
+              {hasLocation ? (
+                <div style={{marginTop:14}}>
+                  <strong className="field-label">Location</strong>
+                  <iframe
+                    title="Sighting location"
+                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${sighting.lat}%2C${sighting.lon}`}
+                    className="sighting-map"
+                    loading="lazy"
+                  ></iframe>
+                  <div className="muted" style={{marginTop:6, display:'flex', justifyContent:'space-between', gap:8, flexWrap:'wrap'}}>
+                    <span>{sighting.lat.toFixed(5)}, {sighting.lon.toFixed(5)}{sighting.accuracy ? ` · ±${Math.round(sighting.accuracy)} m` : ''}</span>
+                    <a href={`https://maps.apple.com/?q=${sighting.lat},${sighting.lon}`} target="_blank" rel="noreferrer" style={{color:'var(--accent)'}}>Open in Maps</a>
+                  </div>
+                </div>
+              ) : (
+                <div className="muted" style={{marginTop:14}}>No location recorded.</div>
+              )}
+
+              <div className="stack" style={{marginTop:18}}>
+                {sp && (
+                  <button className="btn secondary" onClick={() => { onOpenSpecies(sp.id); onClose(); }}>
+                    View {sp.name} details
+                  </button>
+                )}
+                <button className="btn danger" onClick={handleDelete}>Delete sighting</button>
               </div>
             </div>
           </div>
@@ -1101,12 +1195,12 @@
               <div>
                 <label className="field-label">Location</label>
                 {gpsState === 'ok' && coords ? (
-                  <div className="card" style={{padding:'10px 12px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                    <div>
-                      <div style={{fontSize:14, fontWeight:500}}>{coords.lat.toFixed(5)}, {coords.lon.toFixed(5)}</div>
+                  <div className="card" style={{padding:'10px 12px', display:'flex', justifyContent:'space-between', alignItems:'center', gap:8}}>
+                    <div style={{minWidth:0, flex:1, overflow:'hidden'}}>
+                      <div style={{fontSize:14, fontWeight:500, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{coords.lat.toFixed(5)}, {coords.lon.toFixed(5)}</div>
                       <div className="muted">±{Math.round(coords.accuracy)} m · <a target="_blank" rel="noreferrer" href={`https://maps.apple.com/?q=${coords.lat},${coords.lon}`} style={{color:'var(--accent)'}}>open in Maps</a></div>
                     </div>
-                    <button className="btn ghost" style={{width:'auto', fontSize:13, padding:'6px 10px'}} onClick={captureGps}>Re-capture</button>
+                    <button className="btn ghost" style={{width:'auto', fontSize:13, padding:'6px 10px', flexShrink:0}} onClick={captureGps}>Re-capture</button>
                   </div>
                 ) : (
                   <button className="btn secondary" onClick={captureGps} disabled={gpsState==='locating'}>
@@ -1164,9 +1258,20 @@
       const [sightings, setSightings] = useState([]);
       const [selectedId, setSelectedId] = useState(null);
       const [loggingId, setLoggingId] = useState(null);
+      const [viewingSightingId, setViewingSightingId] = useState(null);
       const [settings, setSettings] = useState(loadSettings);
       const [settingsOpen, setSettingsOpen] = useState(false);
       const [syncState, setSyncState] = useState('idle'); // idle | syncing | offline
+
+      // Lock body scroll while any full-screen modal is open so swipes don't
+      // bleed through to the page underneath.
+      const anyModalOpen = !!(selectedId || loggingId || viewingSightingId || settingsOpen);
+      useEffect(() => {
+        if (!anyModalOpen) return;
+        const prev = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => { document.body.style.overflow = prev; };
+      }, [anyModalOpen]);
 
       // Initial load: pull local + remote, merge.
       useEffect(() => {
@@ -1298,7 +1403,6 @@
         pushSighting(enriched);
       };
       const deleteSighting = async id => {
-        if (!confirm('Delete this sighting? It will be removed from both phones.')) return;
         await dbDel(id);
         setSightings(prev => prev.filter(s => s.id !== id));
         supaDeleteSighting(id).catch(e => console.warn('remote delete failed', e));
@@ -1345,8 +1449,7 @@
           {view === 'sightings' && (
             <SightingsView
               sightings={sightings}
-              onOpenSpecies={setSelectedId}
-              onDelete={deleteSighting}
+              onOpen={setViewingSightingId}
             />
           )}
 
@@ -1365,6 +1468,17 @@
               onSave={saveSighting}
             />
           )}
+          {viewingSightingId && (() => {
+            const s = sightings.find(x => x.id === viewingSightingId);
+            return s ? (
+              <SightingModal
+                sighting={s}
+                onClose={() => setViewingSightingId(null)}
+                onDelete={deleteSighting}
+                onOpenSpecies={setSelectedId}
+              />
+            ) : null;
+          })()}
           {settingsOpen && (
             <SettingsModal
               settings={settings}
