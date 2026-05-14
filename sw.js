@@ -1,6 +1,6 @@
 // Offline-first service worker. Cache the shell + CDN deps so the app works
 // in patchy signal on the island.
-const CACHE = 'skye-wildlife-v20';
+const CACHE = 'skye-wildlife-v21';
 const SHELL = [
   './',
   './index.html',

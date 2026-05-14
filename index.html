@@ -78,7 +78,7 @@
 
     /* Layout primitives */
     .app { max-width: 720px; margin: 0 auto; padding: 0 16px 96px; }
-    .header { padding: 16px 0 8px; display: flex; align-items: center; gap: 12px; }
+    .header { padding: calc(16px + env(safe-area-inset-top)) 0 8px; display: flex; align-items: center; gap: 12px; }
     .header h1 { font-size: 22px; font-weight: 700; }
     .header .sub { font-size: 13px; color: var(--ink-3); }
     .tabs {
