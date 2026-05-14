@@ -646,19 +646,6 @@
       );
     }
 
-    async function preloadAllPhotos(onProgress) {
-      const ids = SPECIES.map(s => s.id);
-      let done = 0;
-      for (const id of ids) {
-        await fetchSpeciesPhoto(id);
-        const url = photoUrlMap[id];
-        // Force-prime the SW cache by fetching the image bytes (both card and hero size)
-        try { if (url) await fetch(url).catch(() => {}); } catch {}
-        done++;
-        onProgress?.(done, ids.length);
-      }
-    }
-
     // ── Filter logic ──────────────────────────────────────────────
     function matchesFilter(s, f) {
       if (f.group && s.group !== f.group) return false;
@@ -905,23 +892,6 @@
     }
 
     // ── Sightings list ────────────────────────────────────────────
-    function PreloadButton() {
-      const [progress, setProgress] = useState(null);
-      const total = SPECIES.length;
-      const run = async () => {
-        setProgress(0);
-        await preloadAllPhotos(d => setProgress(d));
-        setProgress('done');
-        setTimeout(() => setProgress(null), 2000);
-      };
-      const label = progress === null
-        ? `Download all reference photos for offline use`
-        : progress === 'done'
-        ? `All photos cached ✓`
-        : `Caching photos… ${progress}/${total}`;
-      return <button className="btn secondary" onClick={run} disabled={progress !== null && progress !== 'done'}>{label}</button>;
-    }
-
     function SightingsView({ sightings, onOpen }) {
       const sorted = useMemo(
         () => [...sightings].sort((a, b) => b.dateISO.localeCompare(a.dateISO)),
@@ -935,7 +905,6 @@
               <p style={{fontWeight:600, color:'var(--ink-2)'}}>No sightings yet</p>
               <p className="muted">Open a species and tap "Log a sighting" to start your trip journal.</p>
             </div>
-            <PreloadButton />
           </div>
         );
       }
@@ -965,7 +934,6 @@
               </button>
             );
           })}
-          <PreloadButton />
         </div>
       );
     }
