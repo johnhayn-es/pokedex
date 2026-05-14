@@ -195,7 +195,20 @@
     .btn:disabled { opacity: 0.4; }
 
     /* Step header */
-    .step-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .step-h {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      width: 100%; padding: 0; background: none; border: 0; color: inherit;
+      text-align: left; margin-bottom: 8px;
+    }
+    .step-h:disabled { cursor: default; }
+    .step-h:not(:disabled) { cursor: pointer; }
+    .step-titles { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+    .selected-summary {
+      font-size: 18px; font-weight: 600; color: var(--accent-2);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .section.collapsed { padding-bottom: 0; }
+    .section.collapsed .step-h { margin-bottom: 0; }
     .step-q { font-size: 18px; font-weight: 600; }
     .step-n { font-size: 12px; color: var(--ink-4); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
 
@@ -254,6 +267,23 @@
     /* Empty states */
     .empty { text-align: center; padding: 40px 20px; color: var(--ink-3); }
     .empty .e { font-size: 48px; margin-bottom: 8px; }
+
+    /* Fixed footer CTA on the Identify wizard */
+    .show-matches-cta {
+      position: fixed;
+      left: 0; right: 0;
+      bottom: 0;
+      padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, var(--bg) 70%, rgba(0,0,0,0));
+      z-index: 50;
+      display: flex; justify-content: center;
+      pointer-events: none;
+    }
+    .show-matches-cta .btn {
+      pointer-events: auto;
+      max-width: 688px; /* matches .app inner content width (720 - 2*16 padding) */
+      width: 100%;
+    }
 
     /* Header settings button */
     .settings-btn {
@@ -557,40 +587,11 @@
 
       return (
         <div className="stack">
-          {/* Current filter chips */}
-          {filterCount(filter) > 0 && (
-            <div className="chips">
-              {filter.group && (
-                <button className="chip active" onClick={() => setFilter({ ...filter, group: null })}>
-                  {C.groups.find(g => g.key === filter.group)?.emoji} {C.groups.find(g => g.key === filter.group)?.label}
-                  <span className="x">×</span>
-                </button>
-              )}
-              {[...filter.habitats].map(h => {
-                const o = C.habitats.find(x => x.key === h);
-                return <button key={h} className="chip active" onClick={() => toggleSet('habitats', h)}>{o.emoji} {o.label}<span className="x">×</span></button>;
-              })}
-              {[...filter.sizes].map(s => {
-                const o = C.sizes.find(x => x.key === s);
-                return <button key={s} className="chip active" onClick={() => toggleSet('sizes', s)}>{o.label}<span className="x">×</span></button>;
-              })}
-              {[...filter.colours].map(c => {
-                const o = C.colours.find(x => x.key === c);
-                return <button key={c} className="chip active" onClick={() => toggleSet('colours', c)}>{o.label}<span className="x">×</span></button>;
-              })}
-              {[...filter.features].map(f => {
-                const o = C.features.find(x => x.key === f);
-                return <button key={f} className="chip active" onClick={() => toggleSet('features', f)}>{o.label}<span className="x">×</span></button>;
-              })}
-              <button className="chip" onClick={() => setFilter(emptyFilter())}>Reset all</button>
-            </div>
-          )}
-
           {/* Step 1: group */}
           <Section
-            done={stepDone.group}
             q="What kind of creature?"
             step="Step 1 of 4"
+            selectedLabels={filter.group ? [C.groups.find(g => g.key === filter.group)?.label].filter(Boolean) : []}
           >
             <div className="options list">
               {C.groups.map(g => (
@@ -605,10 +606,10 @@
           {/* Step 2: habitat */}
           {stepDone.group && (
             <Section
-              done={stepDone.habitat}
               q="Where did you see it?"
               step="Step 2 of 4"
               hint="Tap any that apply"
+              selectedLabels={[...filter.habitats].map(k => C.habitats.find(h => h.key === k)?.label).filter(Boolean)}
             >
               <div className="options list">
                 {C.habitats.map(h => (
@@ -624,10 +625,10 @@
           {/* Step 3: size */}
           {stepDone.habitat && (
             <Section
-              done={stepDone.size}
               q="How big was it?"
               step="Step 3 of 4"
               hint="Tap any that fit"
+              selectedLabels={[...filter.sizes].map(k => C.sizes.find(s => s.key === k)?.label).filter(Boolean)}
             >
               <div className="options list">
                 {C.sizes.map(s => (
@@ -645,10 +646,10 @@
           {/* Step 4: colour */}
           {stepDone.size && (
             <Section
-              done={stepDone.colour}
               q="Main colour?"
               step="Step 4 of 4"
               hint="Tap any that apply"
+              selectedLabels={[...filter.colours].map(k => C.colours.find(c => c.key === k)?.label).filter(Boolean)}
             >
               <div className="options list">
                 {C.colours.map(c => (
@@ -674,25 +675,47 @@
             </Section>
           )}
 
-          {/* Show matches CTA — always visible after step 1 */}
-          {filter.group && (
-            <button className="btn accent" onClick={onShowMatches}>
-              Show {matchCount} {matchCount === 1 ? 'match' : 'matches'} →
-            </button>
-          )}
         </div>
       );
     }
 
-    function Section({ q, step, hint, children, done }) {
+    function ShowMatchesCta({ matchCount, onClick }) {
       return (
-        <section className="card">
-          <div className="step-h">
-            <span className="step-q">{q}</span>
-            <span className="step-n">{step}</span>
-          </div>
-          {hint && <p className="muted" style={{marginBottom:10}}>{hint}</p>}
-          {children}
+        <div className="show-matches-cta">
+          <button className="btn accent" onClick={onClick}>
+            Show {matchCount} {matchCount === 1 ? 'match' : 'matches'} →
+          </button>
+        </div>
+      );
+    }
+
+    function Section({ q, step, hint, children, selectedLabels }) {
+      const hasSel = selectedLabels && selectedLabels.length > 0;
+      const [forceOpen, setForceOpen] = useState(false);
+      useEffect(() => { if (!hasSel) setForceOpen(false); }, [hasSel]);
+      const collapsed = hasSel && !forceOpen;
+      return (
+        <section className={`card section ${collapsed ? 'collapsed' : ''}`}>
+          <button
+            type="button"
+            className="step-h"
+            onClick={() => hasSel && setForceOpen(v => !v)}
+            disabled={!hasSel}
+          >
+            <span className="step-titles">
+              <span className="step-q">{q}</span>
+              {collapsed && (
+                <span className="selected-summary">{selectedLabels.join(', ')}</span>
+              )}
+            </span>
+            <span className="step-n">{collapsed ? 'Change' : step}</span>
+          </button>
+          {!collapsed && (
+            <>
+              {hint && <p className="muted" style={{marginBottom:10}}>{hint}</p>}
+              {children}
+            </>
+          )}
         </section>
       );
     }
@@ -1189,6 +1212,9 @@
               matchCount={matches.length}
               onShowMatches={() => setView('browse')}
             />
+          )}
+          {view === 'identify' && filter.group && (
+            <ShowMatchesCta matchCount={matches.length} onClick={() => setView('browse')} />
           )}
           {view === 'browse' && (
             <BrowseView

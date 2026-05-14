@@ -130,6 +130,38 @@ window.SPECIES = [
     where: 'Coastal beaches and islands in summer. Will dive-bomb you near colonies.',
     fact: 'Makes the longest migration of any animal — pole to pole, ~70,000 km a year.'
   },
+  {
+    id: 'herring-gull', name: 'Herring gull', latin: 'Larus argentatus', emoji: '🐦',
+    group: 'bird', habitats: ['coast','village','sea','cliff'], size: 'medium', colours: ['white','grey','yellow'],
+    features: ['webbed-feet'],
+    description: 'The default seaside gull. Big, grey-winged, white body, pink legs, and a yellow bill with a red spot.',
+    where: 'Everywhere along the coast and in coastal villages. The chip-stealing one.',
+    fact: 'Chicks instinctively peck at the red spot on the parent\'s bill — the action triggers the adult to regurgitate food.'
+  },
+  {
+    id: 'great-black-backed-gull', name: 'Great black-backed gull', latin: 'Larus marinus', emoji: '🐦',
+    group: 'bird', habitats: ['coast','sea','cliff'], size: 'large', colours: ['black','white'],
+    features: ['webbed-feet'],
+    description: 'The world\'s largest gull — bigger than a goose. Slate-black wings, white head and body, heavy yellow bill, pink legs.',
+    where: 'Headlands and harbours. Often perched on a high rock keeping watch.',
+    fact: 'Bold enough to take rabbits and other seabirds whole.'
+  },
+  {
+    id: 'common-gull', name: 'Common gull', latin: 'Larus canus', emoji: '🐦',
+    group: 'bird', habitats: ['coast','moor','loch'], size: 'medium', colours: ['white','grey','yellow'],
+    features: ['webbed-feet'],
+    description: 'Dainty grey-and-white gull, smaller than the herring, with a greenish-yellow bill and a soft round-eyed face.',
+    where: 'Loch shores, wet fields and coastlines. The gull most likely to be inland.',
+    fact: 'Despite the name, less abundant around Skye than the herring gull — but it\'s the one you\'ll see on the moor.'
+  },
+  {
+    id: 'manx-shearwater', name: 'Manx shearwater', latin: 'Puffinus puffinus', emoji: '🐦',
+    group: 'bird', habitats: ['sea','sky'], size: 'small', colours: ['black','white'],
+    features: ['long-wings','stiff-wings'],
+    description: 'Slim black-and-white seabird that flies low over the waves on stiff, alternating dark/white tilting wingbeats.',
+    where: 'Boat trips into the Minch in summer, or evenings flying past headlands toward the colonies on Rum.',
+    fact: 'Spends days at sea over the Atlantic and returns to its burrow nest only after dark; can live 40+ years.'
+  },
 
   // ── WATERFOWL & WADERS ─────────────────────────────────────────
   {
@@ -179,6 +211,30 @@ window.SPECIES = [
     description: 'Largest UK wader. Mottled brown with a very long, smoothly down-curved bill.',
     where: 'Moor in summer, estuary mud in winter. The bubbling spring call is unforgettable.',
     fact: 'The Gaelic name "guilbneach" — listen for the rising "cur-lee" cry that gives them their name.'
+  },
+  {
+    id: 'mute-swan', name: 'Mute swan', latin: 'Cygnus olor', emoji: '🦢',
+    group: 'bird', habitats: ['loch','coast'], size: 'huge', colours: ['white','orange'],
+    features: ['long-neck','webbed-feet'],
+    description: 'The classic big white swan, with a vivid orange bill and a black knob at the base.',
+    where: 'Lochs, sheltered bays and slow rivers. Often as pairs with grey-brown cygnets in tow.',
+    fact: 'Despite the name, they hiss, grunt and trumpet — not at all silent.'
+  },
+  {
+    id: 'lapwing', name: 'Lapwing', latin: 'Vanellus vanellus', emoji: '🐦',
+    group: 'bird', habitats: ['moor','coast'], size: 'medium', colours: ['black','white','orange'],
+    features: [],
+    description: 'Pied plover with a long wispy crest and iridescent green-purple back. Tumbling spring flight and a loud "peeeee-wit" call.',
+    where: 'Wet fields and rough grazing. Listen for the swooshing wing-beats of displaying males.',
+    fact: 'Once so common they were just called "common plovers" — numbers have crashed in recent decades.'
+  },
+  {
+    id: 'snipe', name: 'Snipe', latin: 'Gallinago gallinago', emoji: '🐦',
+    group: 'bird', habitats: ['moor','loch'], size: 'small', colours: ['brown'],
+    features: ['dagger-beak'],
+    description: 'Cryptically-streaked brown wader with an absurdly long straight bill. Stays hidden in tussocks until you almost step on it.',
+    where: 'Boggy ground on the moor. Listen for the eerie "drumming" sound in spring display.',
+    fact: 'The drumming comes from air vibrating the outer tail feathers in a steep dive — not the voice.'
   },
 
   // ── OTHER BIRDS ────────────────────────────────────────────────
@@ -238,6 +294,54 @@ window.SPECIES = [
     where: 'Stony ground anywhere — moorland, mountain tops, even rocky shores.',
     fact: 'Migrates from sub-Saharan Africa each spring, one of the longest migrations of any small bird.'
   },
+  {
+    id: 'dipper', name: 'Dipper', latin: 'Cinclus cinclus', emoji: '🐦',
+    group: 'bird', habitats: ['loch','woodland'], size: 'small', colours: ['brown','white'],
+    features: [],
+    description: 'Round dark-brown bird with a brilliant white throat patch. Bobs constantly on a streamside rock, then dives underwater to hunt.',
+    where: 'Fast-flowing burns and small rivers. Patience and a quiet wait usually pays off.',
+    fact: 'The only songbird in the world that walks underwater along the streambed against the current.'
+  },
+  {
+    id: 'robin', name: 'Robin', latin: 'Erithacus rubecula', emoji: '🐦',
+    group: 'bird', habitats: ['woodland','village'], size: 'tiny', colours: ['orange','brown','white'],
+    features: [],
+    description: 'Round little body, orange-red breast and face, brown wings. Bold and curious, especially near food.',
+    where: 'Cottage gardens, woodland edges, picnic spots looking for crumbs.',
+    fact: 'The UK\'s national bird, and one of the few that sings right through the winter.'
+  },
+  {
+    id: 'wren', name: 'Wren', latin: 'Troglodytes troglodytes', emoji: '🐦',
+    group: 'bird', habitats: ['woodland','village','coast','moor'], size: 'tiny', colours: ['brown'],
+    features: [],
+    description: 'Tiny round brown ball with a cocked-up little tail and a machine-gun-fast song far bigger than the bird.',
+    where: 'Skulks in low brambles, drystone walls, hedge bottoms. Listen first.',
+    fact: 'One of Britain\'s smallest birds — yet capable of singing continuously at full volume for several seconds.'
+  },
+  {
+    id: 'pied-wagtail', name: 'Pied wagtail', latin: 'Motacilla alba yarrellii', emoji: '🐦',
+    group: 'bird', habitats: ['village','coast','loch'], size: 'small', colours: ['black','white'],
+    features: ['long-tail'],
+    description: 'Slim, smart black-and-white bird with a long tail that pumps up and down as it runs after insects on the ground.',
+    where: 'Car parks, lawns, lochside paths, harbour walls.',
+    fact: 'Roosts communally in winter — sometimes hundreds gather in a single town tree.'
+  },
+  {
+    id: 'short-eared-owl', name: 'Short-eared owl', latin: 'Asio flammeus', emoji: '🦉',
+    group: 'bird', habitats: ['moor','sky'], size: 'large', colours: ['brown','yellow'],
+    features: ['hooked-beak'],
+    description: 'Pale streaky-brown owl with bright yellow eyes set in dark patches. Quarters low over open moor in daylight.',
+    where: 'Open moorland in vole years. Often seen mid-to-late afternoon.',
+    fact: 'One of the few owls regularly active by day — and a true migrant, with some birds wintering as far as Africa.'
+  },
+  {
+    id: 'twite', name: 'Twite', latin: 'Linaria flavirostris', emoji: '🐦',
+    group: 'bird', habitats: ['moor','coast'], size: 'small', colours: ['brown'],
+    features: [],
+    description: 'Small streaky-brown finch with a pink rump (in males) and a forked tail. Looks like a linnet but warmer-toned.',
+    where: 'Heather moor and coastal grassland in summer; stubble fields and saltmarsh in winter.',
+    fact: 'One of the few UK songbirds that breeds almost exclusively in northern uplands and the western islands.'
+  },
 
   // ── LAND MAMMALS ───────────────────────────────────────────────
   {
@@ -296,6 +400,30 @@ window.SPECIES = [
     where: 'Quiet sea-lochs at low tide, especially around dawn. Kylerhea is the classic Skye spot.',
     fact: 'Skye is one of the very best places in the UK to see otters in salt water.'
   },
+  {
+    id: 'rabbit', name: 'Rabbit', latin: 'Oryctolagus cuniculus', emoji: '🐇',
+    group: 'mammal', habitats: ['village','moor','coast'], size: 'small', colours: ['brown'],
+    features: ['white-tail'],
+    description: 'The familiar wild rabbit — long ears, white belly, and a flash of white tail-flash when bolting for the burrow.',
+    where: 'Grassy banks, roadsides, dunes. Most active at dawn and dusk.',
+    fact: 'Introduced to Britain by the Normans for meat and fur — they\'ve been here about 900 years.'
+  },
+  {
+    id: 'stoat', name: 'Stoat', latin: 'Mustela erminea', emoji: '🦡',
+    group: 'mammal', habitats: ['moor','woodland','village'], size: 'small', colours: ['brown','white'],
+    features: ['long-tail'],
+    description: 'Slim, sinuous predator — chocolate-brown above, creamy below, with a long tail tipped in black.',
+    where: 'Stone walls, drystone dykes, woodland edges. Briefly glimpsed bounding across roads.',
+    fact: 'Turns white as "ermine" in winter — though rarely in Skye\'s mild climate.'
+  },
+  {
+    id: 'feral-goat', name: 'Feral goat', latin: 'Capra hircus', emoji: '🐐',
+    group: 'mammal', habitats: ['moor','mountain','coast'], size: 'large', colours: ['black','brown','white'],
+    features: ['horned','shaggy'],
+    description: 'Long-haired, sweep-horned wild goats — descendants of escaped domestic stock living free on the hills for centuries.',
+    where: 'The Trotternish ridge has a famous herd; also along the Coral Beach coast at Claigan.',
+    fact: 'Some Skye herds may descend from goats left behind when their owners were forced out during the 18th-century Clearances.'
+  },
 
   // ── SEA MAMMALS & FISH ─────────────────────────────────────────
   {
@@ -346,6 +474,38 @@ window.SPECIES = [
     where: 'West coast in mid-to-late summer. Watch for a triangular fin and a tail fin trailing well behind.',
     fact: 'Can filter the equivalent of an Olympic swimming pool of water through its gills every hour.'
   },
+  {
+    id: 'common-dolphin', name: 'Common dolphin', latin: 'Delphinus delphis', emoji: '🐬',
+    group: 'sea', habitats: ['sea'], size: 'huge', colours: ['grey','white','yellow'],
+    features: ['fin'],
+    description: 'Sleek dolphin with an unmistakable yellow-tan hourglass on its side. Active, fast, often in big bow-riding groups.',
+    where: 'Offshore in summer, especially the deeper Minch waters.',
+    fact: 'One of the most acrobatic dolphins — passing boats often attract huge pods leaping clear of the water.'
+  },
+  {
+    id: 'white-beaked-dolphin', name: 'White-beaked dolphin', latin: 'Lagenorhynchus albirostris', emoji: '🐬',
+    group: 'sea', habitats: ['sea'], size: 'huge', colours: ['grey','white','black'],
+    features: ['fin'],
+    description: 'Stocky dark grey dolphin with a bright white blaze on the flanks and a short, blunt, white beak.',
+    where: 'Cold Hebridean waters, including the Minch. The most northerly dolphin you\'ll see here.',
+    fact: 'A North Atlantic specialty — Scotland is one of the best places in the world to see them.'
+  },
+  {
+    id: 'rissos-dolphin', name: 'Risso\'s dolphin', latin: 'Grampus griseus', emoji: '🐬',
+    group: 'sea', habitats: ['sea'], size: 'huge', colours: ['grey','white'],
+    features: ['fin'],
+    description: 'Large, robust dolphin with a tall fin and a head with no obvious beak. Heavily scarred grey-white skin in older animals.',
+    where: 'Deeper offshore water around Skye and the outer Hebrides — uncommon but regular.',
+    fact: 'Their pale scarring comes from squid bites and from social interactions with other dolphins.'
+  },
+  {
+    id: 'orca', name: 'Orca', latin: 'Orcinus orca', emoji: '🐋',
+    group: 'sea', habitats: ['sea'], size: 'huge', colours: ['black','white'],
+    features: ['fin'],
+    description: 'Unmistakable: jet-black and brilliant white with a towering triangular fin (up to 2 m in adult males) and a white eye patch.',
+    where: 'Rare but the Minch and the waters off Skye see passing pods — a real lottery sighting.',
+    fact: 'The "West Coast Community" is the UK\'s resident orca pod — only about eight individuals remain.'
+  },
 
   // ── REPTILES & AMPHIBIANS ──────────────────────────────────────
   {
@@ -364,6 +524,22 @@ window.SPECIES = [
     where: 'Sunny patches on boardwalks, stones and old fence posts.',
     fact: 'Gives birth to live young rather than laying eggs — an adaptation to cool northern climates.'
   },
+  {
+    id: 'slow-worm', name: 'Slow worm', latin: 'Anguis fragilis', emoji: '🦎',
+    group: 'reptile', habitats: ['moor','woodland','village'], size: 'small', colours: ['brown','grey'],
+    features: [],
+    description: 'Looks like a small bronze-grey snake but is actually a legless lizard — smooth, shiny, no zigzag pattern.',
+    where: 'Compost heaps, sun-warmed flat stones, garden borders.',
+    fact: 'Can live to 50+ years — the longest-lived lizard in the world, despite looking nothing like one.'
+  },
+  {
+    id: 'common-frog', name: 'Common frog', latin: 'Rana temporaria', emoji: '🐸',
+    group: 'reptile', habitats: ['loch','moor','woodland'], size: 'tiny', colours: ['brown'],
+    features: [],
+    description: 'The familiar olive-brown frog with a dark mask through the eye and dark-barred hind legs.',
+    where: 'Damp grass and bog around pools and ditches; in early spring, in big clumps of frogspawn.',
+    fact: 'Skye\'s frogs spawn extraordinarily early — sometimes February — and can survive being partly frozen.'
+  },
 
   // ── INSECTS ─────────────────────────────────────────────────────
   {
@@ -381,6 +557,30 @@ window.SPECIES = [
     description: 'Huge dragonfly — Britain\'s longest. Boldly striped black-and-gold body, bright green eyes.',
     where: 'Patrols streams and bog pools on warm days. The unmistakable hawking flight.',
     fact: 'Larvae spend up to five years living in stream-bed gravel before a single summer of flight.'
+  },
+  {
+    id: 'peacock-butterfly', name: 'Peacock butterfly', latin: 'Aglais io', emoji: '🦋',
+    group: 'insect', habitats: ['village','woodland','moor'], size: 'tiny', colours: ['red','black','blue'],
+    features: [],
+    description: 'Big velvety dark-red butterfly with vivid blue-and-black eye spots on each of its four wings.',
+    where: 'Gardens, buddleia bushes, sunny woodland clearings.',
+    fact: 'Hibernates as an adult in cool dark places — sometimes flapping inside houses come spring.'
+  },
+  {
+    id: 'painted-lady', name: 'Painted lady', latin: 'Vanessa cardui', emoji: '🦋',
+    group: 'insect', habitats: ['moor','coast','village'], size: 'tiny', colours: ['orange','black','white'],
+    features: [],
+    description: 'Orange-and-black butterfly, similar to a red admiral but paler, with white spots on the wingtips.',
+    where: 'Anywhere flowery. Numbers vary wildly year-to-year depending on migration.',
+    fact: 'Skye\'s painted ladies have flown here from North Africa — one of the longest insect migrations on earth.'
+  },
+  {
+    id: 'scotch-argus', name: 'Scotch argus', latin: 'Erebia aethiops', emoji: '🦋',
+    group: 'insect', habitats: ['moor','woodland'], size: 'tiny', colours: ['brown','orange'],
+    features: [],
+    description: 'Dark chocolate-brown butterfly with an orange band on each wing carrying a row of small black eye-spots with white centres.',
+    where: 'Heather moorland and woodland edges in late summer (July–September).',
+    fact: 'A true Scottish/upland specialty — found only in north Britain.'
   },
 ];
 
@@ -498,4 +698,30 @@ window.WIKI_SLUGS = {
   'common-lizard':           'Viviparous_lizard',
   'common-blue':             'Polyommatus_icarus',
   'golden-ringed-dragonfly': 'Cordulegaster_boltonii',
+  // Added in second batch
+  'herring-gull':            'European_herring_gull',
+  'great-black-backed-gull': 'Great_black-backed_gull',
+  'common-gull':             'Common_gull',
+  'manx-shearwater':         'Manx_shearwater',
+  'mute-swan':               'Mute_swan',
+  'lapwing':                 'Northern_lapwing',
+  'snipe':                   'Common_snipe',
+  'dipper':                  'White-throated_dipper',
+  'robin':                   'European_robin',
+  'wren':                    'Eurasian_wren',
+  'pied-wagtail':            'White_wagtail',
+  'short-eared-owl':         'Short-eared_owl',
+  'twite':                   'Twite',
+  'rabbit':                  'European_rabbit',
+  'stoat':                   'Stoat',
+  'feral-goat':              'Feral_goat',
+  'common-dolphin':          'Short-beaked_common_dolphin',
+  'white-beaked-dolphin':    'White-beaked_dolphin',
+  'rissos-dolphin':          'Risso%27s_dolphin',
+  'orca':                    'Orca',
+  'slow-worm':               'Slow_worm',
+  'common-frog':             'Common_frog',
+  'peacock-butterfly':       'Aglais_io',
+  'painted-lady':            'Vanessa_cardui',
+  'scotch-argus':            'Erebia_aethiops',
 };
