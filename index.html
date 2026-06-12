@@ -1536,23 +1536,27 @@
       );
     }
 
-    // ── Recent-sightings map (per species, lazy on expand) ────────
+    // ── Recent-sightings map (per species, open by default) ───────
     function SpeciesSightingsMap({ species }) {
-      const [open, setOpen] = useState(false);
-      const [state, setState] = useState('idle'); // idle | loading | ready | empty | offline
+      const [open, setOpen] = useState(true);
+      const [state, setState] = useState('loading'); // loading | ready | empty | offline
       const [data, setData] = useState(null);
       const [showApprox, setShowApprox] = useState(false);
 
-      const expand = () => {
-        setOpen(o => !o);
-        if (state !== 'idle') return;
+      useEffect(() => {
+        let cancelled = false;
         setState('loading');
         fetchSpeciesObservations(species.latin).then(d => {
+          if (cancelled) return;
           setData(d);
           if (d.offline && !d.points.length) setState('offline');
           else setState(d.points.length ? 'ready' : 'empty');
         });
-      };
+        return () => { cancelled = true; };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [species.id]);
+
+      const expand = () => setOpen(o => !o);
 
       const precise = data ? data.points.filter(p => !p.fuzzy) : [];
       const approx = data ? data.points.filter(p => p.fuzzy) : [];
@@ -1614,7 +1618,7 @@
               <div className="latin-row">{species.latin}</div>
               <SpotPlanner species={species} />
               <p className="desc">{species.description}</p>
-              <div className="fact"><strong>Did you know</strong>{species.fact}</div>
+              <p className="desc">{species.fact}</p>
               <SpeciesSightingsMap species={species} />
               <div style={{marginTop: 14}} className="stack">
                 <button className="btn accent" onClick={onLog}>
