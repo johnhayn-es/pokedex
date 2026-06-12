@@ -29,6 +29,7 @@
       --accent-soft: #dcfce7;
       --warn: #b91c1c;
       --inverse: #fbf8f4;
+      --bg-translucent: rgba(244, 237, 228, 0.85);
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -46,6 +47,7 @@
         --accent-soft: #14532d;
         --warn: #fca5a5;
         --inverse: #1c1917;
+        --bg-translucent: rgba(28, 25, 23, 0.85);
       }
     }
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -77,18 +79,20 @@
     }
 
     /* Layout primitives */
-    .app { max-width: 720px; margin: 0 auto; padding: 0 16px 96px; }
-    .header { padding: calc(16px + env(safe-area-inset-top)) 0 8px; display: flex; align-items: center; gap: 12px; }
+    .app { max-width: 720px; margin: 0 auto; padding: calc(12px + env(safe-area-inset-top)) 16px calc(104px + env(safe-area-inset-bottom)); }
+    .header { padding: 16px 0 20px; display: flex; align-items: center; gap: 12px; }
     .header h1 { font-size: 22px; font-weight: 700; }
     .header .sub { font-size: 13px; color: var(--ink-3); }
+    /* Bottom sticky nav */
     .tabs {
-      display: flex; gap: 4px; padding: 4px;
-      background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-      margin: 12px 0 16px; position: sticky; top: 8px; z-index: 5;
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      position: fixed; left: 50%; transform: translateX(-50%); bottom: 0;
+      width: 100%; max-width: 720px; z-index: 45;
+      display: flex; gap: 6px; padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+      background: var(--bg-translucent); border-top: 1px solid var(--line);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     }
     .tab {
-      flex: 1; padding: 9px 12px; border-radius: 9px; font-size: 14px; font-weight: 500;
+      flex: 1; padding: 13px 12px; border-radius: 11px; font-size: 15px; font-weight: 600;
       color: var(--ink-3); background: transparent;
     }
     .tab.active { background: var(--ink); color: var(--inverse); }
@@ -112,6 +116,27 @@
     .chip .x { font-size: 14px; opacity: 0.75; margin-left: 2px; }
 
     .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    /* Search bar on Browse */
+    .search-bar {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      padding: 0 12px;
+    }
+    .search-bar .search-icon { font-size: 15px; opacity: 0.6; flex-shrink: 0; }
+    .search-input {
+      flex: 1; border: 0; background: transparent; padding: 11px 0; font-size: 16px;
+      color: var(--ink); border-radius: 0;
+    }
+    .search-input:focus { outline: none; }
+    .search-input::placeholder { color: var(--ink-4); }
+    .search-input::-webkit-search-cancel-button { display: none; }
+    .search-clear {
+      flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+      background: var(--line); color: var(--ink-2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; line-height: 1;
+    }
 
     /* Wizard option grid */
     .options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
@@ -303,6 +328,83 @@
       width: 100%; height: 240px; border: 1px solid var(--line); border-radius: 12px;
       margin-top: 6px; background: var(--surface);
     }
+    /* Leaflet shared map + taller variant for the full-tab sightings map */
+    .leaflet-map { width: 100%; height: 240px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+    .sighting-map.tall, .leaflet-map.tall { height: 62vh; min-height: 320px; }
+    .leaflet-container { border-radius: 12px; font: inherit; }
+    .leaflet-container a { color: var(--accent); }
+
+    /* List/Map segmented toggle */
+    .seg-toggle { display: flex; gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+    .seg-toggle button { flex: 1; padding: 12px; border-radius: 9px; font-size: 15px; font-weight: 500; color: var(--ink-3); background: transparent; }
+    .seg-toggle button.active { background: var(--ink); color: var(--inverse); }
+
+    /* Spotting tier chips + planner */
+    .tier-chip { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; vertical-align: 1px; }
+    .tier-good { background: var(--accent-soft); color: var(--accent-2); }
+    .tier-fair { background: transparent; border: 1px solid var(--ink-4); color: var(--ink-2); }
+    .tier-poor { background: var(--line); color: var(--ink-3); }
+    .tier-unknown { background: var(--line); color: var(--ink-4); }
+    /* Prominent best-chance card at the top of the species view */
+    .spot-card { padding: 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); margin: 12px 0 14px; }
+    .spot-card.tierbg-good { border-color: var(--accent); background: var(--accent-soft); }
+    .spot-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .spot-card-title { font-size: 13px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink-3); }
+    .spot-card.tierbg-good .spot-card-title { color: var(--accent-2); }
+    .spot-verdict { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+    .spot-line { font-size: 14px; margin-top: 2px; }
+
+    /* Browse ranked-filter section headers + show-unlikely toggle */
+    .rank-header { font-size: 13px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink-3); margin: 4px 0 2px; }
+    .unlikely-toggle { width: 100%; text-align: center; padding: 10px; margin-top: 8px; color: var(--ink-3); font-size: 13px; font-weight: 600; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+
+    /* Browse weather/time bar */
+    .spot-bar-wrap { display: flex; flex-direction: column; gap: 6px; }
+    .spot-presets { overflow-x: auto; }
+    .spot-presets button { white-space: nowrap; }
+
+    /* Browse search + filter row */
+    .browse-controls { display: flex; gap: 8px; align-items: stretch; }
+    .browse-controls .search-bar { flex: 1; }
+    .filter-btn {
+      flex-shrink: 0; display: flex; align-items: center; gap: 4px;
+      padding: 0 14px; border-radius: 12px; font-size: 14px; font-weight: 600;
+      background: var(--surface); border: 1px solid var(--line); color: var(--ink-2);
+    }
+    .filter-btn.on { background: var(--accent); color: var(--inverse); border-color: var(--accent); }
+
+    /* Always-visible type + where filter strips */
+    .filter-row { display: flex; align-items: center; gap: 10px; }
+    .filter-label { flex-shrink: 0; width: 44px; font-size: 12px; font-weight: 600; color: var(--ink-3); }
+    .filter-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; flex: 1; }
+    .filter-strip .chip { white-space: nowrap; flex-shrink: 0; padding: 11px 15px; font-size: 14px; border-radius: 12px; }
+
+    /* Card score chip + dim */
+    .species-card.dim { opacity: 0.45; }
+    .card-tier {
+      position: absolute; left: 8px; top: 8px; z-index: 1;
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; line-height: 1;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+    .card-tier.tier-good { background: var(--accent); color: var(--inverse); }
+    .card-tier.tier-fair { background: var(--surface); color: var(--ink-2); border: 1px solid var(--ink-4); }
+    .card-tier.tier-poor { background: var(--ink-4); color: var(--surface); }
+
+    /* Per-species map disclosure */
+    .map-note { font-size: 14px; color: var(--ink-2); padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; line-height: 1.5; }
+    .map-caption { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: 6px; }
+    .map-caption .muted { font-size: 12px; }
+    .link-btn { flex-shrink: 0; color: var(--accent); font-size: 13px; font-weight: 600; background: none; padding: 0; }
+    .map-disclosure { margin-top: 8px; }
+    .disclosure-row {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      font-size: 14px; font-weight: 600; color: var(--ink); text-align: left;
+    }
+    .disclosure-caret { color: var(--ink-3); font-size: 18px; }
+    .map-disclosure-body { margin-top: 8px; }
 
     /* Photo input */
     .photo-input { display: block; position: relative; aspect-ratio: 4/3; background: var(--surface); border: 1px dashed var(--line); border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; }
@@ -345,6 +447,49 @@
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
+
+    /* One-tap capture FAB — floats above the bottom nav */
+    .capture-fab {
+      position: fixed; right: 18px; bottom: calc(92px + env(safe-area-inset-bottom));
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--accent); color: var(--inverse);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+      z-index: 60;
+    }
+    .capture-fab-icon { font-size: 36px; line-height: 1; margin-top: -3px; font-weight: 300; }
+
+    /* Capture confirmation toast */
+    .toast {
+      position: fixed; left: 50%; transform: translateX(-50%);
+      bottom: calc(150px + env(safe-area-inset-bottom));
+      background: var(--ink); color: var(--inverse);
+      border-radius: 999px; padding: 7px 7px 7px 16px;
+      display: flex; align-items: center; gap: 6px;
+      z-index: 70; box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+      max-width: calc(100vw - 32px);
+      animation: fadein 0.15s ease;
+    }
+    .toast-text { font-size: 14px; font-weight: 500; white-space: nowrap; }
+    .toast-action {
+      background: rgba(255,255,255,0.16); color: var(--inverse);
+      border-radius: 999px; padding: 6px 13px; font-size: 13px; font-weight: 600;
+    }
+
+    /* Group filter chips in the identify modal */
+    .picker-groups {
+      display: flex; gap: 6px; overflow-x: auto;
+      margin-bottom: 12px; padding-bottom: 2px;
+    }
+    .picker-groups .chip { white-space: nowrap; flex-shrink: 0; }
+
+    /* Triage inbox banner + unidentified rows */
+    .inbox-banner {
+      background: var(--accent-soft); color: var(--accent-2);
+      border-radius: 10px; padding: 9px 13px; font-size: 13px; font-weight: 600;
+    }
+    .sighting.unidentified { border-color: var(--accent); }
+    .sighting .tap-id { font-size: 13px; color: var(--accent-2); font-weight: 600; margin-top: 4px; }
 
     /* Logger chip + sync indicator on sightings */
     .logger-chip {
@@ -646,6 +791,341 @@
       );
     }
 
+    // ── Leaflet lazy loader ───────────────────────────────────────
+    // Inject Leaflet (CSS+JS) only on first map use — keeps it off the
+    // critical path for users who never open a map. Resolves window.L.
+    let _leafletPromise = null;
+    function loadLeaflet() {
+      if (_leafletPromise) return _leafletPromise;
+      _leafletPromise = new Promise(resolve => {
+        if (window.L) return resolve(window.L);
+        const css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(css);
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js';
+        s.onload = () => resolve(window.L);
+        s.onerror = () => resolve(null);
+        document.body.appendChild(s);
+      });
+      return _leafletPromise;
+    }
+
+    // ── iNaturalist recent-observations fetch (per species) ───────
+    // Keyless, CORS-open. Cache-first with a 7-day freshness window so a
+    // session opening a few species makes 0-3 calls (iNat asks <=60/min,
+    // no Retry-After). Normalised to the few fields we plot, cached in
+    // localStorage so it works offline once previewed online.
+    const INAT_CACHE_PREFIX = 'skye-inat-v1:';
+    const INAT_BBOX = 'swlat=56.9&swlng=-6.9&nelat=57.8&nelng=-5.7';
+    const INAT_FRESH_MS = 7 * 864e5;
+    const inatInFlight = new Map();
+
+    async function fetchSpeciesObservations(latin) {
+      const key = INAT_CACHE_PREFIX + latin;
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        try {
+          const c = JSON.parse(raw);
+          if (c.fetchedAt && Date.now() - new Date(c.fetchedAt).getTime() < INAT_FRESH_MS) return c;
+        } catch {}
+      }
+      if (inatInFlight.has(latin)) return inatInFlight.get(latin);
+      const p = (async () => {
+        try {
+          const d1 = new Date(Date.now() - 730 * 864e5).toISOString().slice(0, 10);
+          const url = `https://api.inaturalist.org/v1/observations?taxon_name=${encodeURIComponent(latin)}&${INAT_BBOX}&d1=${d1}&per_page=200&order_by=observed_on&order=desc&geo=true&mappable=true`;
+          const res = await fetch(url);
+          if (!res.ok) throw new Error('inat ' + res.status);
+          const j = await res.json();
+          const points = (j.results || []).filter(o => o.location).map(o => {
+            const [lat, lon] = o.location.split(',').map(Number);
+            const fuzzy = o.obscured || o.taxon_geoprivacy === 'obscured' || o.geoprivacy === 'obscured';
+            return { lat, lon, fuzzy, accuracy: o.public_positional_accuracy || null, date: o.observed_on || null, uri: o.uri || null };
+          }).filter(p => isFinite(p.lat) && isFinite(p.lon));
+          const out = { fetchedAt: new Date().toISOString(), total: j.total_results || points.length, points };
+          try { localStorage.setItem(key, JSON.stringify(out)); } catch {}
+          return out;
+        } catch (e) {
+          const fallback = localStorage.getItem(key);
+          if (fallback) { try { return { ...JSON.parse(fallback), stale: true }; } catch {} }
+          return { fetchedAt: null, total: 0, points: [], offline: !navigator.onLine };
+        } finally {
+          inatInFlight.delete(latin);
+        }
+      })();
+      inatInFlight.set(latin, p);
+      return p;
+    }
+
+    // ── Shared Leaflet map ────────────────────────────────────────
+    // points: [{lat, lon, fuzzy?, accuracy?, id?, label?, onClick?}]
+    // Creates the map once, updates markers on points change, fixes the
+    // grey-tile issue via invalidateSize after the modal slide-up.
+    const SKYE_CENTER = [57.3, -6.2];
+    const SKYE_BOUNDS = [[56.9, -6.9], [57.8, -5.7]];
+
+    function LeafletMap({ points, fit = 'points', className = 'leaflet-map', accent = '#166534' }) {
+      const elRef = useRef(null);
+      const mapRef = useRef(null);
+      const layerRef = useRef(null);
+      const [ready, setReady] = useState(false);
+
+      useEffect(() => {
+        let cancelled = false;
+        let timer = null;
+        loadLeaflet().then(L => {
+          if (cancelled || !L || !elRef.current || mapRef.current) return;
+          const map = L.map(elRef.current, { scrollWheelZoom: false, attributionControl: true })
+            .setView(SKYE_CENTER, 9);
+          L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 17,
+            attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a>',
+          }).addTo(map);
+          mapRef.current = map;
+          layerRef.current = L.layerGroup().addTo(map);
+          setReady(true);
+          timer = setTimeout(() => map.invalidateSize(), 250);
+        });
+        return () => {
+          cancelled = true;
+          if (timer) clearTimeout(timer);
+          if (mapRef.current) { mapRef.current.remove(); mapRef.current = null; layerRef.current = null; }
+        };
+      }, []);
+
+      useEffect(() => {
+        const L = window.L, map = mapRef.current, lg = layerRef.current;
+        if (!L || !map || !lg) return;
+        lg.clearLayers();
+        const pts = points || [];
+        const all = [], precise = [];
+        // Draw faint circles first so precise pins always sit on top of them.
+        pts.filter(p => p.fuzzy).forEach(p => {
+          L.circle([p.lat, p.lon], { radius: p.accuracy || 20000, color: '#a8a29e', weight: 1, dashArray: '4', fillOpacity: 0.07 }).addTo(lg);
+          all.push([p.lat, p.lon]);
+        });
+        pts.filter(p => !p.fuzzy).forEach(p => {
+          const m = L.circleMarker([p.lat, p.lon], { radius: 7, color: '#fff', weight: 1.5, fillColor: accent, fillOpacity: 0.95 }).addTo(lg);
+          if (p.label) m.bindPopup(p.label);
+          if (p.onClick) m.on('click', p.onClick);
+          all.push([p.lat, p.lon]); precise.push([p.lat, p.lon]);
+        });
+        if (fit === 'points' && all.length) {
+          map.fitBounds(all, { padding: [28, 28], maxZoom: 13 });
+        } else if (fit === 'skye') {
+          // Zoom to the precise pins where the animal actually is; else frame Skye.
+          if (precise.length) map.fitBounds(precise, { padding: [28, 28], maxZoom: 12 });
+          else map.fitBounds(SKYE_BOUNDS, { padding: [10, 10] });
+        } else {
+          map.fitBounds(SKYE_BOUNDS, { padding: [10, 10] });
+        }
+      }, [points, ready, fit, accent]);
+
+      return <div ref={elRef} className={className} />;
+    }
+
+    // ── Spotting-conditions engine ────────────────────────────────
+    // One scoring function powers BOTH the Browse "best chance now" filter and
+    // the per-species planner. A transparent rule stack → tier + plain reason,
+    // never a fake percentage. Data: Open-Meteo forecast + marine (keyless,
+    // CORS-open), cached 60 min, graceful offline fallback to editorial text.
+    const WX_PREFIX = 'skye-wx-v1:';
+    const WX_FRESH_MS = 60 * 60e3;
+    const SEA_COORD = [57.34, -5.92]; // hardcoded open-sea point — marine API snaps land points to bogus cells
+    const wxInFlight = new Map();
+
+    async function fetchConditions(lat, lon, needMarine) {
+      const key = WX_PREFIX + lat.toFixed(2) + ',' + lon.toFixed(2) + (needMarine ? ':m' : '');
+      const raw = localStorage.getItem(key);
+      if (raw) { try { const c = JSON.parse(raw); if (c.fetchedAt && Date.now() - new Date(c.fetchedAt).getTime() < WX_FRESH_MS) return c; } catch {} }
+      if (wxInFlight.has(key)) return wxInFlight.get(key);
+      const p = (async () => {
+        try {
+          const fUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation,precipitation_probability,cloud_cover,wind_speed_10m,wind_gusts_10m,visibility,weather_code,is_day,shortwave_radiation&daily=sunrise,sunset&timezone=auto&forecast_days=2`;
+          const forecast = await fetch(fUrl).then(r => { if (!r.ok) throw new Error('wx'); return r.json(); });
+          let marine = null;
+          if (needMarine) {
+            const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${SEA_COORD[0]}&longitude=${SEA_COORD[1]}&hourly=wave_height,sea_level_height_msl&timezone=auto&forecast_days=2`;
+            marine = await fetch(mUrl).then(r => r.ok ? r.json() : null).catch(() => null);
+          }
+          const out = { fetchedAt: new Date().toISOString(), forecast, marine };
+          try { localStorage.setItem(key, JSON.stringify(out)); } catch {}
+          return out;
+        } catch (e) {
+          const fb = localStorage.getItem(key);
+          if (fb) { try { return { ...JSON.parse(fb), stale: true }; } catch {} }
+          return { offline: !navigator.onLine, forecast: null, marine: null };
+        } finally { wxInFlight.delete(key); }
+      })();
+      wxInFlight.set(key, p);
+      return p;
+    }
+
+    // Season windows (month from..to inclusive) — only the load-bearing species.
+    const SEASON = {
+      puffin: [4, 8], razorbill: [4, 8], guillemot: [4, 8], kittiwake: [4, 8], 'arctic-tern': [5, 8],
+      'manx-shearwater': [5, 9], 'basking-shark': [6, 9],
+      'minke-whale': [5, 10], 'common-dolphin': [5, 10], 'bottlenose-dolphin': [5, 10],
+      'white-beaked-dolphin': [5, 10], 'rissos-dolphin': [5, 10],
+      cuckoo: [5, 6], wheatear: [4, 9], 'common-blue': [5, 9], 'peacock-butterfly': [4, 9],
+      'painted-lady': [5, 9], 'scotch-argus': [7, 9], 'golden-ringed-dragonfly': [5, 9],
+      adder: [3, 10], 'common-lizard': [3, 10], 'slow-worm': [3, 10],
+    };
+    function seasonGate(sp, month) {
+      const w = SEASON[sp.id];
+      if (!w) return 1;
+      const inSeason = w[0] <= w[1] ? (month >= w[0] && month <= w[1]) : (month >= w[0] || month <= w[1]);
+      return inSeason ? 1 : 0.05;
+    }
+
+    const CREPUSCULAR = new Set(['otter', 'roe-deer', 'red-deer', 'rabbit', 'mountain-hare', 'short-eared-owl', 'pine-marten', 'stoat', 'red-squirrel']);
+    const SHORE = new Set(['otter', 'common-seal', 'grey-seal', 'oystercatcher', 'curlew', 'grey-heron', 'eider', 'merganser']);
+
+    function regimeOf(sp) {
+      const h = sp.habitats || [], f = sp.features || [];
+      if (sp.group === 'sea' || f.includes('fin')) return 'seawatch';
+      if (sp.group === 'reptile' || sp.group === 'insect') return 'ectotherm';
+      if (SHORE.has(sp.id)) return 'shore';
+      if (f.includes('soaring') || f.includes('hooked-beak') || h.includes('sky')) return 'raptor';
+      if (h.includes('cliff')) return 'cliffseabird';
+      if (sp.group === 'mammal') return 'landmammal';
+      if (h.includes('woodland') || h.includes('village')) return 'woodland';
+      return 'moorbird';
+    }
+    const REGIME = {
+      seawatch:     { w: { vis: .30, sea: .30, wind: .20, precip: .15, time: .05 }, sea: 1, lift: 0, tide: 0 },
+      cliffseabird: { w: { precip: .25, wind: .25, vis: .20, sea: .15, time: .15 }, sea: 1, lift: 1, tide: 0 },
+      shore:        { w: { tide: .30, time: .25, precip: .20, wind: .15, sea: .10 }, sea: 1, lift: 0, tide: 1 },
+      raptor:       { w: { wind: .25, vis: .25, sun: .15, precip: .20, time: .15 }, sea: 0, lift: 1, tide: 0, sunMode: 'thermal' },
+      moorbird:     { w: { precip: .30, wind: .25, time: .20, vis: .15, sun: .10 }, sea: 0, lift: 0, tide: 0 },
+      woodland:     { w: { precip: .40, wind: .25, time: .25, sun: .10 }, sea: 0, lift: 0, tide: 0 },
+      landmammal:   { w: { time: .35, precip: .25, wind: .20, vis: .15, sun: .05 }, sea: 0, lift: 0, tide: 0 },
+      ectotherm:    { w: { sun: .45, precip: .30, wind: .15, time: .10 }, sea: 0, lift: 0, tide: 0, sunMode: 'bask' },
+    };
+
+    // Baseline "findability" — carries SCARCITY so good weather can't inflate a
+    // rare animal. Skye-tuned: flagships generous, genuine rarities low.
+    const REGIME_BASELINE = { seawatch: 0.25, cliffseabird: 0.9, shore: 0.8, raptor: 0.7, moorbird: 0.85, woodland: 0.7, landmammal: 0.8, ectotherm: 0.45 };
+    const BASELINE = {
+      orca: 0.05, 'pine-marten': 0.15, 'rissos-dolphin': 0.12, 'slow-worm': 0.18, 'red-squirrel': 0.35,
+      'golden-eagle': 0.4, 'white-tailed-eagle': 0.6, buzzard: 0.85, raven: 0.85, 'hen-harrier': 0.45, peregrine: 0.45, 'short-eared-owl': 0.4, kestrel: 0.7,
+      'harbour-porpoise': 0.4, 'minke-whale': 0.25, 'common-dolphin': 0.25, 'bottlenose-dolphin': 0.28, 'white-beaked-dolphin': 0.22, 'basking-shark': 0.38,
+      otter: 0.65, 'common-seal': 0.7, 'grey-seal': 0.75,
+      'mountain-hare': 0.5, 'roe-deer': 0.6, rabbit: 0.75, stoat: 0.45,
+      adder: 0.4, 'common-lizard': 0.4, 'common-frog': 0.5,
+    };
+    function baselineOf(sp) {
+      return BASELINE[sp.id] != null ? BASELINE[sp.id] : (REGIME_BASELINE[regimeOf(sp)] != null ? REGIME_BASELINE[regimeOf(sp)] : 0.7);
+    }
+
+    const clamp01 = x => Math.max(0, Math.min(1, x));
+    const lerp = (x, a, b) => clamp01((x - a) / (b - a));
+
+    function localHourISO(d) {
+      const p = n => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:00`;
+    }
+
+    function nearestLowTideMin(marine, iso) {
+      const M = marine && marine.hourly; if (!M || !M.sea_level_height_msl) return null;
+      const t = M.time, s = M.sea_level_height_msl;
+      const i0 = t.indexOf(iso); if (i0 < 0) return null;
+      let best = null;
+      for (let i = 1; i < s.length - 1; i++) {
+        if (s[i] != null && s[i] <= s[i - 1] && s[i] <= s[i + 1]) {
+          const dm = (i - i0) * 60;
+          if (best == null || Math.abs(dm) < Math.abs(best)) best = dm;
+        }
+      }
+      return best;
+    }
+
+    function fTime(c, sp, iso) {
+      const toMin = s => { const m = (s || '').slice(11, 16).match(/(\d\d):(\d\d)/); return m ? +m[1] * 60 + +m[2] : null; };
+      const cur = toMin(iso), sr = toMin(c.sunrise), ss = toMin(c.sunset);
+      const crep = CREPUSCULAR.has(sp.id);
+      if (c.isDay === 0) return { f: crep ? 0.7 : 0.2, low: 'After dark', high: '' };
+      if (crep && cur != null && sr != null && ss != null) {
+        if (Math.abs(cur - sr) <= 90 || Math.abs(cur - ss) <= 90) return { f: 1, low: '', high: 'Dawn/dusk — prime time' };
+        return { f: 0.7, low: 'Midday — better at dawn or dusk', high: '' };
+      }
+      return { f: 1, low: '', high: '' };
+    }
+
+    // Pure scorer: (species, conditions, hourISO, month) → {score, tier, reason, confidence}
+    function scoreSpecies(sp, cond, iso, month) {
+      const gate = seasonGate(sp, month);
+      const reg = REGIME[regimeOf(sp)];
+      const H = cond && cond.forecast && cond.forecast.hourly;
+      if (!H) return { score: null, tier: 'unknown', reason: 'Live conditions unavailable' };
+      const i = H.time.indexOf(iso);
+      if (i < 0) return { score: null, tier: 'unknown', reason: 'No forecast for that hour' };
+      const c = {
+        temp: H.temperature_2m[i], precip: H.precipitation[i], pprob: H.precipitation_probability[i],
+        cloud: H.cloud_cover[i], wind: H.wind_speed_10m[i], gust: H.wind_gusts_10m[i],
+        vis: H.visibility[i], isDay: H.is_day[i], swr: H.shortwave_radiation[i],
+        sunrise: cond.forecast.daily.sunrise[0], sunset: cond.forecast.daily.sunset[0],
+      };
+      let wave = null, lowTideMin = null;
+      if (reg.sea && cond.marine && cond.marine.hourly) {
+        const M = cond.marine.hourly; const mi = M.time.indexOf(iso);
+        if (mi >= 0 && M.wave_height) wave = M.wave_height[mi];
+        lowTideMin = nearestLowTideMin(cond.marine, iso);
+      }
+      const fac = {};
+      fac.precip = { f: (1 - lerp(c.precip, 0, 4)) * (1 - 0.3 * (c.pprob || 0) / 100), low: 'Too wet', high: 'Dry' };
+      let wf = 1 - lerp(c.gust, 15, 55);
+      if (reg.lift) wf = clamp01(wf + 0.15 * (1 - Math.abs(lerp(c.gust, 8, 32) - 0.5) * 2));
+      fac.wind = { f: wf, low: 'Too windy', high: reg.lift ? 'Light wind — good lift for soaring birds' : 'Calm' };
+      fac.vis = { f: lerp(c.vis, 2000, 20000), low: 'Poor visibility / fog', high: 'Clear — you can see far' };
+      const sunMode = reg.sunMode;
+      fac.sun = {
+        f: lerp(c.swr, 150, 420) * lerp(c.temp, 11, 17),
+        low: sunMode === 'bask' ? 'Cool & cloudy — poor basking weather' : sunMode === 'thermal' ? 'Overcast — fewer thermals' : '',
+        high: sunMode === 'bask' ? 'Warm & bright — good basking weather' : sunMode === 'thermal' ? 'Sunny — good thermals for soaring' : '',
+      };
+      fac.time = fTime(c, sp, iso);
+      if (reg.sea && wave != null) fac.sea = { f: 1 - lerp(wave, 0.75, 2.5), low: 'Sea too rough to spot fins', high: 'Calm sea — good for sea-watching' };
+      if (reg.tide && lowTideMin != null) fac.tide = { f: Math.abs(lowTideMin) <= 90 ? 1 : 0.65, low: 'Tide high — shore covered', high: 'Low tide — shore feeders exposed' };
+
+      let num = 0, den = 0; const phrases = [];
+      for (const k in reg.w) { const F = fac[k]; if (!F || F.f == null || isNaN(F.f)) continue; num += reg.w[k] * F.f; den += reg.w[k]; phrases.push({ w: reg.w[k], ...F }); }
+      const score01 = den ? num / den : 0;
+      const hazard = (c.gust > 65 || c.precip > 8 || c.vis < 800 || (reg.sea && wave != null && wave > 4)) ? 0.1 : 1;
+      const score = Math.round(100 * baselineOf(sp) * gate * hazard * score01);
+      // Headline = the factor with the biggest score impact (weight × shortfall),
+      // skipping empty phrases; negative only when the score is actually mediocre.
+      const worst = phrases.filter(p => p.low).map(p => ({ ...p, impact: p.w * (1 - p.f) })).sort((a, b) => b.impact - a.impact)[0];
+      const best = phrases.filter(p => p.high).map(p => ({ ...p, impact: p.w * p.f })).sort((a, b) => b.impact - a.impact)[0];
+      let reason = '';
+      if (gate < 0.2) reason = 'Out of season';
+      else if (hazard < 1) reason = 'Rough out there — better to wait it out';
+      else if (score < 66 && worst && worst.f < 0.6) reason = worst.low;
+      else if (best) reason = best.high;
+      else if (worst) reason = worst.low;
+      // Thresholds lowered to account for the baseline-findability multiplier.
+      const tier = (gate < 0.2) ? 'poor' : score >= 58 ? 'good' : score >= 28 ? 'fair' : 'poor';
+      const confidence = (sp.habitats || []).some(x => x === 'mountain' || x === 'sky' || x === 'sea') ? 'low' : 'med';
+      return { score, tier, reason, confidence };
+    }
+
+    // Best window today/tomorrow for one species: scan forecast hours.
+    function bestWindow(sp, cond, month) {
+      const H = cond && cond.forecast && cond.forecast.hourly;
+      if (!H) return null;
+      const nowISO = localHourISO(new Date());
+      const start = Math.max(0, H.time.indexOf(nowISO));
+      let best = null;
+      for (let i = start; i < Math.min(H.time.length, start + 40); i++) {
+        const r = scoreSpecies(sp, cond, H.time[i], month);
+        if (r.score == null) continue;
+        if (!best || r.score > best.score) best = { ...r, iso: H.time[i] };
+      }
+      return best;
+    }
+
     // ── Filter logic ──────────────────────────────────────────────
     function matchesFilter(s, f) {
       if (f.group && s.group !== f.group) return false;
@@ -675,7 +1155,6 @@
       return (
         <nav className="tabs">
           {[
-            { k: 'identify', label: 'Identify' },
             { k: 'browse', label: 'Browse' },
             { k: 'sightings', label: `Sightings${sightingCount ? ` · ${sightingCount}` : ''}` },
           ].map(t => (
@@ -684,128 +1163,6 @@
             </button>
           ))}
         </nav>
-      );
-    }
-
-    // ── Identify wizard ───────────────────────────────────────────
-    function IdentifyView({ filter, setFilter, onShowMatches, matchCount }) {
-      // The wizard advances based on what the filter has answered.
-      const stepDone = {
-        group: !!filter.group,
-        habitat: filter.habitats.size > 0,
-        size: filter.sizes.size > 0,
-        colour: filter.colours.size > 0,
-      };
-      const allDone = stepDone.group && stepDone.habitat && stepDone.size && stepDone.colour;
-
-      const toggleSet = (key, value) => {
-        const next = { ...filter, [key]: new Set(filter[key]) };
-        next[key].has(value) ? next[key].delete(value) : next[key].add(value);
-        setFilter(next);
-      };
-      const setGroup = g => setFilter({ ...filter, group: filter.group === g ? null : g });
-
-      return (
-        <div className="stack">
-          {/* Step 1: group */}
-          <Section
-            q="What kind of creature?"
-            step="Step 1 of 4"
-            selectedLabels={filter.group ? [C.groups.find(g => g.key === filter.group)?.label].filter(Boolean) : []}
-          >
-            <div className="options list">
-              {C.groups.map(g => (
-                <button key={g.key} className={`option ${filter.group === g.key ? 'selected' : ''}`} onClick={() => setGroup(g.key)}>
-                  <span className="e">{g.emoji}</span>
-                  <span>{g.label}</span>
-                </button>
-              ))}
-            </div>
-          </Section>
-
-          {/* Step 2: habitat */}
-          {stepDone.group && (
-            <Section
-              q="Where did you see it?"
-              step="Step 2 of 4"
-              hint="Tap any that apply"
-              selectedLabels={[...filter.habitats].map(k => C.habitats.find(h => h.key === k)?.label).filter(Boolean)}
-            >
-              <div className="options list">
-                {C.habitats.map(h => (
-                  <button key={h.key} className={`option ${filter.habitats.has(h.key) ? 'selected' : ''}`} onClick={() => toggleSet('habitats', h.key)}>
-                    <span className="e">{h.emoji}</span>
-                    <span>{h.label}</span>
-                  </button>
-                ))}
-              </div>
-            </Section>
-          )}
-
-          {/* Step 3: size */}
-          {stepDone.habitat && (
-            <Section
-              q="How big was it?"
-              step="Step 3 of 4"
-              hint="Tap any that fit"
-              selectedLabels={[...filter.sizes].map(k => C.sizes.find(s => s.key === k)?.label).filter(Boolean)}
-            >
-              <div className="options list">
-                {C.sizes.map(s => (
-                  <button key={s.key} className={`option ${filter.sizes.has(s.key) ? 'selected' : ''}`} onClick={() => toggleSet('sizes', s.key)}>
-                    <div style={{display:'flex', flexDirection:'column', gap:2}}>
-                      <span style={{fontWeight:600}}>{s.label}</span>
-                      <span className="hint">{s.hint}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </Section>
-          )}
-
-          {/* Step 4: colour */}
-          {stepDone.size && (
-            <Section
-              q="Main colour?"
-              step="Step 4 of 4"
-              hint="Tap any that apply"
-              selectedLabels={[...filter.colours].map(k => C.colours.find(c => c.key === k)?.label).filter(Boolean)}
-            >
-              <div className="options list">
-                {C.colours.map(c => (
-                  <button key={c.key} className={`option ${filter.colours.has(c.key) ? 'selected' : ''}`} onClick={() => toggleSet('colours', c.key)}>
-                    <span className="swatch" style={{background: c.swatch}}></span>
-                    <span>{c.label}</span>
-                  </button>
-                ))}
-              </div>
-            </Section>
-          )}
-
-          {/* Optional: features */}
-          {allDone && (
-            <Section q="Any of these features?" step="Optional refinement" hint="Useful when the list is still long">
-              <div className="chips">
-                {C.features.map(f => (
-                  <button key={f.key} className={`chip ${filter.features.has(f.key) ? 'active' : ''}`} onClick={() => toggleSet('features', f.key)}>
-                    {f.label}
-                  </button>
-                ))}
-              </div>
-            </Section>
-          )}
-
-        </div>
-      );
-    }
-
-    function ShowMatchesCta({ matchCount, onClick }) {
-      return (
-        <div className="show-matches-cta">
-          <button className="btn accent" onClick={onClick}>
-            Show {matchCount} {matchCount === 1 ? 'match' : 'matches'} →
-          </button>
-        </div>
       );
     }
 
@@ -842,60 +1199,193 @@
 
     // ── Browse view ───────────────────────────────────────────────
     function BrowseView({ filter, setFilter, onSelect, sightingCounts }) {
-      const matches = useMemo(() => SPECIES.filter(s => matchesFilter(s, filter)), [filter]);
+      const [query, setQuery] = useState('');
+      const [cond, setCond] = useState(null);
+      const [spotISO, setSpotISO] = useState(() => localHourISO(new Date()));
+      const [wxState, setWxState] = useState('loading'); // loading | ready | offline
+      const [showUnlikely, setShowUnlikely] = useState(false);
+      const [filterOpen, setFilterOpen] = useState(false);
+      const month = new Date().getMonth() + 1;
+      const q = query.trim().toLowerCase();
+
+      // Best chance is always on: fetch conditions once on mount.
+      useEffect(() => {
+        let cancelled = false;
+        fetchConditions(57.3, -6.2, true).then(c => {
+          if (cancelled) return;
+          if (!c.forecast) { setWxState('offline'); return; }
+          setCond(c); setWxState('ready');
+        });
+        return () => { cancelled = true; };
+      }, []);
+
+      const presets = useMemo(() => {
+        const now = new Date();
+        return [
+          { iso: localHourISO(now), label: 'Now' },
+          { iso: localHourISO(new Date(now.getTime() + 3 * 3600e3)), label: '+3h' },
+          { iso: localHourISO(new Date(now.getTime() + 6 * 3600e3)), label: '+6h' },
+        ];
+      }, []);
+
+      const ready = wxState === 'ready' && cond;
+      const scores = useMemo(() => {
+        if (!ready || !spotISO) return null;
+        const m = {};
+        for (const s of SPECIES) m[s.id] = scoreSpecies(s, cond, spotISO, month);
+        return m;
+      }, [ready, cond, spotISO, month]);
+
+      const matches = useMemo(() => {
+        const base = SPECIES.filter(s => matchesFilter(s, filter));
+        if (!q) return base;
+        return base.filter(s => s.name.toLowerCase().includes(q) || s.latin.toLowerCase().includes(q));
+      }, [filter, q]);
+
+      const ranked = useMemo(() => scores ? [...matches].sort((a, b) => ((scores[b.id] && scores[b.id].score) ?? -1) - ((scores[a.id] && scores[a.id].score) ?? -1)) : matches, [scores, matches]);
+      const likelyGood = useMemo(() => scores ? ranked.filter(s => scores[s.id] && scores[s.id].tier === 'good') : [], [scores, ranked]);
+      const likelyFair = useMemo(() => scores ? ranked.filter(s => scores[s.id] && scores[s.id].tier === 'fair') : [], [scores, ranked]);
+      const unlikely = useMemo(() => scores ? ranked.filter(s => !scores[s.id] || scores[s.id].tier === 'poor' || scores[s.id].tier === 'unknown') : [], [scores, ranked]);
+      const moreCount = filter.sizes.size + filter.colours.size + filter.features.size;
+      const toggleHabitat = k => {
+        const next = { ...filter, habitats: new Set(filter.habitats) };
+        next.habitats.has(k) ? next.habitats.delete(k) : next.habitats.add(k);
+        setFilter(next);
+      };
+
       return (
         <div className="stack">
-          {filterCount(filter) > 0 && (
-            <div className="chips">
-              <span className="muted" style={{alignSelf:'center', marginRight:4}}>Filtered:</span>
-              {filter.group && (
-                <button className="chip active" onClick={() => setFilter({ ...filter, group: null })}>
-                  {C.groups.find(g => g.key === filter.group)?.label} <span className="x">×</span>
-                </button>
-              )}
-              {[...filter.habitats, ...filter.sizes, ...filter.colours, ...filter.features].map(k => {
-                const o = [...C.habitats, ...C.sizes, ...C.colours, ...C.features].find(x => x.key === k);
-                return o ? <button key={k} className="chip active" onClick={() => {
-                  const next = { ...filter };
-                  ['habitats','sizes','colours','features'].forEach(d => {
-                    if (next[d].has(k)) { next[d] = new Set(next[d]); next[d].delete(k); }
-                  });
-                  setFilter(next);
-                }}>{o.label}<span className="x">×</span></button> : null;
-              })}
-              <button className="chip" onClick={() => setFilter(emptyFilter())}>Clear</button>
+          <SpotTimeBar presets={presets} spotISO={spotISO} cond={cond} wxState={wxState} onPick={setSpotISO} />
+          <div className="browse-controls">
+            <div className="search-bar grow">
+              <span className="search-icon" aria-hidden>🔍</span>
+              <input
+                type="search" className="search-input" value={query}
+                onChange={e => setQuery(e.target.value)} placeholder="Search 70 species…"
+                autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false}
+              />
+              {query && <button className="search-clear" onClick={() => setQuery('')} aria-label="Clear search">×</button>}
             </div>
-          )}
+            <button className={`filter-btn ${moreCount ? 'on' : ''}`} onClick={() => setFilterOpen(true)}>
+              ⚙ {moreCount ? moreCount : 'More'}
+            </button>
+          </div>
+          <div className="filter-row">
+            <span className="filter-label">Type</span>
+            <div className="filter-strip">
+              {C.groups.map(g => (
+                <button key={g.key} className={`chip ${filter.group === g.key ? 'active' : ''}`} onClick={() => setFilter({ ...filter, group: filter.group === g.key ? null : g.key })}>
+                  {g.emoji} {g.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="filter-row">
+            <span className="filter-label">Where</span>
+            <div className="filter-strip">
+              {C.habitats.map(h => (
+                <button key={h.key} className={`chip ${filter.habitats.has(h.key) ? 'active' : ''}`} onClick={() => toggleHabitat(h.key)}>
+                  {h.emoji} {h.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {matches.length === 0 ? (
             <div className="empty">
               <div className="e">🤔</div>
-              <p>No matches with that combination.</p>
-              <p className="muted">Try removing a filter.</p>
+              {q ? <><p>No species matching "{query.trim()}".</p><p className="muted">Try fewer letters or a different name.</p></>
+                 : <><p>No matches with that combination.</p><p className="muted">Try removing a filter.</p></>}
             </div>
+          ) : scores ? (
+            <>
+              {likelyGood.length > 0 && (
+                <>
+                  <div className="rank-header">Good chance</div>
+                  <div className="grid">{likelyGood.map(s => renderSpeciesCard(s, scores, sightingCounts, onSelect, false))}</div>
+                </>
+              )}
+              {likelyFair.length > 0 && (
+                <>
+                  <div className="rank-header">Worth a look</div>
+                  <div className="grid">{likelyFair.map(s => renderSpeciesCard(s, scores, sightingCounts, onSelect, false))}</div>
+                </>
+              )}
+              {likelyGood.length === 0 && likelyFair.length === 0 && (
+                <div className="empty"><div className="e">🌧️</div><p className="muted">Nothing's a good bet in these conditions. Try another time above.</p></div>
+              )}
+              {unlikely.length > 0 && (
+                <>
+                  <button className="unlikely-toggle" onClick={() => setShowUnlikely(v => !v)}>
+                    {showUnlikely ? 'Hide' : 'Show'} {unlikely.length} unlikely in these conditions {showUnlikely ? '⌄' : '›'}
+                  </button>
+                  {showUnlikely && <div className="grid">{unlikely.map(s => renderSpeciesCard(s, scores, sightingCounts, onSelect, true))}</div>}
+                </>
+              )}
+            </>
           ) : (
-            <div className="grid">
-              {matches.map(s => (
-                <button key={s.id} className={`species-card ${sightingCounts[s.id] ? 'seen' : ''}`} onClick={() => onSelect(s.id)}>
-                  {sightingCounts[s.id] ? <span className="seen-dot" title={`${sightingCounts[s.id]} sighting${sightingCounts[s.id]===1?'':'s'}`}></span> : null}
-                  <div className="photo-wrap"><SpeciesPhoto species={s} variant="card" /></div>
-                  <div className="text">
-                    <span className="name">{s.name}</span>
-                    <span className="latin">{s.latin}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
+            <div className="grid">{matches.map(s => renderSpeciesCard(s, null, sightingCounts, onSelect, false))}</div>
           )}
+
+          {filterOpen && <FilterModal filter={filter} setFilter={setFilter} onClose={() => setFilterOpen(false)} />}
+        </div>
+      );
+    }
+
+    function renderSpeciesCard(s, scores, sightingCounts, onSelect, dim) {
+      const sc = scores && scores[s.id];
+      return (
+        <button key={s.id} className={`species-card ${sightingCounts[s.id] ? 'seen' : ''} ${dim ? 'dim' : ''}`} onClick={() => onSelect(s.id)}>
+          {sightingCounts[s.id] ? <span className="seen-dot" title={`${sightingCounts[s.id]} sighting${sightingCounts[s.id] === 1 ? '' : 's'}`}></span> : null}
+          {sc && sc.tier !== 'unknown' && <span className={`card-tier tier-${sc.tier}`} title={sc.reason}>{sc.tier === 'good' ? '✓' : sc.tier === 'fair' ? '~' : '✗'}</span>}
+          <div className="photo-wrap"><SpeciesPhoto species={s} variant="card" /></div>
+          <div className="text">
+            <span className="name">{s.name}</span>
+            <span className="latin">{s.latin}</span>
+          </div>
+        </button>
+      );
+    }
+
+    // Always-on best-chance time control (Now / +3h / +6h) + weather summary.
+    function SpotTimeBar({ presets, spotISO, cond, wxState, onPick }) {
+      const H = cond && cond.forecast && cond.forecast.hourly;
+      const i = H ? H.time.indexOf(spotISO) : -1;
+      const summary = wxState === 'loading' ? 'Checking conditions…'
+        : wxState === 'offline' ? '📡 No signal — showing the full list (can\'t rank by conditions).'
+        : i >= 0 ? `Best chance · ${Math.round(H.temperature_2m[i])}°, wind ${Math.round(H.wind_speed_10m[i])} km/h, ${H.precipitation_probability[i]}% rain · Open-Meteo`
+        : 'Best chance';
+      return (
+        <div className="spot-bar-wrap">
+          <div className="seg-toggle spot-presets">
+            {presets.map(p => (
+              <button key={p.iso} className={spotISO === p.iso ? 'active' : ''} onClick={() => onPick(p.iso)}>{p.label}</button>
+            ))}
+          </div>
+          <div className="muted" style={{fontSize:12}}>{summary}</div>
         </div>
       );
     }
 
     // ── Sightings list ────────────────────────────────────────────
     function SightingsView({ sightings, onOpen }) {
+      const [mode, setMode] = useState('list'); // list | map
+      // Unidentified blips float to the top (a triage inbox); the rest by recency.
       const sorted = useMemo(
-        () => [...sightings].sort((a, b) => b.dateISO.localeCompare(a.dateISO)),
+        () => [...sightings].sort((a, b) => {
+          const au = a.speciesId ? 0 : 1, bu = b.speciesId ? 0 : 1;
+          if (au !== bu) return bu - au;
+          return b.dateISO.localeCompare(a.dateISO);
+        }),
         [sightings]
+      );
+      const unidentifiedCount = useMemo(() => sightings.filter(s => !s.speciesId).length, [sightings]);
+      const located = useMemo(
+        () => sightings.filter(s => s.lat != null && s.lon != null).map(s => {
+          const sp = speciesById(s.speciesId);
+          return { lat: s.lat, lon: s.lon, label: `${sp ? sp.name : 'Unidentified'} · ${fmtDate(s.dateISO)}`, onClick: () => onOpen(s.id) };
+        }),
+        [sightings, onOpen]
       );
       if (sorted.length === 0) {
         return (
@@ -903,17 +1393,45 @@
             <div className="empty">
               <div className="e">📓</div>
               <p style={{fontWeight:600, color:'var(--ink-2)'}}>No sightings yet</p>
-              <p className="muted">Open a species and tap "Log a sighting" to start your trip journal.</p>
+              <p className="muted">Tap the + button to log what you see — name it now or later.</p>
             </div>
+          </div>
+        );
+      }
+      const toggle = (
+        <div className="seg-toggle">
+          <button className={mode === 'list' ? 'active' : ''} onClick={() => setMode('list')}>List</button>
+          <button className={mode === 'map' ? 'active' : ''} onClick={() => setMode('map')}>Map</button>
+        </div>
+      );
+      if (mode === 'map') {
+        return (
+          <div className="stack">
+            {toggle}
+            {located.length === 0 ? (
+              <div className="empty"><div className="e">🗺️</div><p className="muted">None of your sightings have a location yet.</p></div>
+            ) : (
+              <>
+                <LeafletMap points={located} fit="points" className="sighting-map tall" />
+                <div className="muted">{located.length} of {sightings.length} sighting{sightings.length === 1 ? '' : 's'} {located.length === 1 ? 'has' : 'have'} a location · tap a pin to open</div>
+              </>
+            )}
           </div>
         );
       }
       return (
         <div className="stack">
+          {toggle}
+          {unidentifiedCount > 0 && (
+            <div className="inbox-banner">
+              {unidentifiedCount} to identify — tap to name {unidentifiedCount === 1 ? 'it' : 'them'}
+            </div>
+          )}
           {sorted.map(g => {
             const sp = speciesById(g.speciesId);
+            const unid = !sp;
             return (
-              <button key={g.id} className="sighting" onClick={() => onOpen(g.id)}>
+              <button key={g.id} className={`sighting ${unid ? 'unidentified' : ''}`} onClick={() => onOpen(g.id)}>
                 <div className="thumb">
                   {g.photoBlob
                     ? <PhotoThumb blob={g.photoBlob} />
@@ -922,14 +1440,14 @@
                     : (sp ? <SpeciesPhoto species={sp} variant="card" /> : <span>❓</span>)}
                 </div>
                 <div className="grow">
-                  <div className="sighting-title">{sp?.name || 'Unknown'}</div>
+                  <div className="sighting-title">{sp ? sp.name : 'Unidentified'}</div>
                   <div className="meta">
                     {g.logger && <span className="logger-chip">{g.logger}</span>}
                     {fmtDate(g.dateISO)}
                     {g.lat != null && ' · 📍'}
                     <SyncDot state={g.syncState} />
                   </div>
-                  {g.notes && <div className="notes">{g.notes}</div>}
+                  {unid ? <div className="tap-id">Tap to identify →</div> : (g.notes && <div className="notes">{g.notes}</div>)}
                 </div>
               </button>
             );
@@ -954,6 +1472,135 @@
       return src ? <img src={src} alt="" /> : null;
     }
 
+    // ── Best-chance-today planner (per species, lazy on expand) ───
+    function fmtSpotHour(iso) {
+      const d = new Date(iso); const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+      const dd = new Date(d); dd.setHours(0, 0, 0, 0);
+      const day = dd.getTime() === t0.getTime() ? 'today' : 'tomorrow';
+      const p = n => String(n).padStart(2, '0');
+      return `${day} ${p(d.getHours())}:${p(d.getMinutes())}`;
+    }
+    function TierChip({ tier }) {
+      const label = tier === 'good' ? 'Good' : tier === 'fair' ? 'Fair' : tier === 'unknown' ? '—' : 'Poor';
+      return <span className={`tier-chip tier-${tier}`}>{label}</span>;
+    }
+    function SpotPlanner({ species }) {
+      const [state, setState] = useState('loading'); // loading | ready | offline
+      const [result, setResult] = useState(null);
+      const needMarine = REGIME[regimeOf(species)].sea === 1;
+
+      useEffect(() => {
+        let cancelled = false;
+        setState('loading');
+        fetchConditions(57.3, -6.2, needMarine).then(cond => {
+          if (cancelled) return;
+          if (!cond.forecast) { setState('offline'); return; }
+          const month = new Date().getMonth() + 1;
+          const now = scoreSpecies(species, cond, localHourISO(new Date()), month);
+          const best = bestWindow(species, cond, month);
+          setResult({ now, best, stale: cond.stale });
+          setState('ready');
+        });
+        return () => { cancelled = true; };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [species.id]);
+
+      const best = result && result.best;
+      const tier = best ? best.tier : 'unknown';
+      const verdict = best
+        ? (best.tier === 'good' ? `Good conditions around ${fmtSpotHour(best.iso)}`
+          : best.tier === 'fair' ? `Fair at best — try ${fmtSpotHour(best.iso)}`
+          : best.reason === 'Out of season' ? 'Out of season just now'
+          : 'Not really worth heading out for today')
+        : '';
+
+      return (
+        <div className={`spot-card tierbg-${tier}`}>
+          <div className="spot-card-head">
+            <span className="spot-card-title">⭐ Best chance today</span>
+            {state === 'ready' && <TierChip tier={tier} />}
+          </div>
+          {state === 'loading' && <div className="muted">Checking the forecast…</div>}
+          {state === 'offline' && <div className="muted">📡 No signal — showing general guidance only.</div>}
+          {state === 'ready' && result && (
+            <>
+              <div className="spot-verdict">{verdict}</div>
+              {best && best.reason && <div className="spot-line">{best.reason}</div>}
+              {result.now && result.now.score != null && <div className="spot-line muted">Right now: {result.now.reason}</div>}
+              <div className="muted" style={{ fontSize: 12, marginTop: 8 }}>
+                Scores conditions for looking, not whether it's there. Open-Meteo{result.stale ? ' · saved snapshot' : ''}.{(species.habitats || []).some(h => h === 'mountain' || h === 'sky' || h === 'sea') ? ' Mountain & sea forecasts are rough — trust your eyes.' : ''}
+              </div>
+            </>
+          )}
+        </div>
+      );
+    }
+
+    // ── Recent-sightings map (per species, lazy on expand) ────────
+    function SpeciesSightingsMap({ species }) {
+      const [open, setOpen] = useState(false);
+      const [state, setState] = useState('idle'); // idle | loading | ready | empty | offline
+      const [data, setData] = useState(null);
+      const [showApprox, setShowApprox] = useState(false);
+
+      const expand = () => {
+        setOpen(o => !o);
+        if (state !== 'idle') return;
+        setState('loading');
+        fetchSpeciesObservations(species.latin).then(d => {
+          setData(d);
+          if (d.offline && !d.points.length) setState('offline');
+          else setState(d.points.length ? 'ready' : 'empty');
+        });
+      };
+
+      const precise = data ? data.points.filter(p => !p.fuzzy) : [];
+      const approx = data ? data.points.filter(p => p.fuzzy) : [];
+      const shown = showApprox ? [...precise, ...approx] : precise;
+      const allObscured = state === 'ready' && precise.length === 0;
+      const asOf = data && data.fetchedAt ? new Date(data.fetchedAt).toLocaleDateString() : null;
+
+      return (
+        <div className="map-disclosure">
+          <button className="disclosure-row" onClick={expand} aria-expanded={open}>
+            <span>📍 Recent sightings near Skye</span>
+            <span className="disclosure-caret">{open ? '⌄' : '›'}</span>
+          </button>
+          {open && (
+            <div className="map-disclosure-body">
+              {state === 'loading' && <div className="muted" style={{padding: '12px 2px'}}>Loading recent sightings…</div>}
+              {state === 'offline' && <div className="muted" style={{padding: '12px 2px'}}>📡 Needs signal — reconnect to see recent sightings near Skye.</div>}
+              {state === 'empty' && <div className="muted" style={{padding: '12px 2px'}}>No community sightings logged here in the last 24 months — doesn't mean they're not around.</div>}
+              {state === 'ready' && (
+                <>
+                  {allObscured && !showApprox ? (
+                    <div className="map-note">
+                      Exact locations are protected for this species, so they aren't pinned. {data.total} record{data.total === 1 ? '' : 's'} logged near Skye in the last 24 months — see <strong>Where to look</strong> above for the best spots.
+                    </div>
+                  ) : (
+                    <LeafletMap points={shown} fit="skye" className="sighting-map" accent="#166534" />
+                  )}
+                  <div className="map-caption">
+                    <span className="muted">
+                      {data.total} record{data.total === 1 ? '' : 's'}, last 24 months · iNaturalist{asOf ? ` · as of ${asOf}` : ''}{data.stale ? ' · saved snapshot' : ''}
+                    </span>
+                    {approx.length > 0 && (
+                      <button className="link-btn" onClick={() => setShowApprox(v => !v)}>
+                        {showApprox ? 'Hide' : 'Show'} {approx.length} approximate area{approx.length === 1 ? '' : 's'}
+                      </button>
+                    )}
+                  </div>
+                  {showApprox && approx.length > 0 && (
+                    <div className="muted" style={{marginTop: 4, fontSize: 12}}>Shaded circles are deliberately blurred to protect sensitive species — the animal is somewhere in that area, not at the centre.</div>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
     // ── Species detail modal ──────────────────────────────────────
     function SpeciesModal({ species, sightings, onClose, onLog }) {
       const own = sightings.filter(s => s.speciesId === species.id);
@@ -965,9 +1612,11 @@
             <div className="modal-body">
               <h2>{species.name}</h2>
               <div className="latin-row">{species.latin}</div>
+              <SpotPlanner species={species} />
               <p className="desc">{species.description}</p>
               <div className="where"><strong>Where to look</strong>{species.where}</div>
               <div className="fact"><strong>Did you know</strong>{species.fact}</div>
+              <SpeciesSightingsMap species={species} />
               <div style={{marginTop: 14}} className="stack">
                 <button className="btn accent" onClick={onLog}>
                   {own.length ? `Log another sighting (${own.length} so far)` : 'Log a sighting'}
@@ -991,11 +1640,12 @@
       return url;
     }
 
-    function SightingModal({ sighting, onClose, onDelete, onOpenSpecies }) {
+    function SightingModal({ sighting, onClose, onDelete, onOpenSpecies, onIdentify }) {
       const sp = speciesById(sighting.speciesId);
       const blobUrl = useBlobUrl(sighting.photoBlob);
       const userPhotoSrc = blobUrl || (sighting.photoPath ? supaPhotoUrl(sighting.photoPath) : null);
       const hasLocation = sighting.lat != null && sighting.lon != null;
+      const unidentified = !sp;
 
       const handleDelete = async () => {
         if (!confirm('Delete this sighting? It will be removed from both phones.')) return;
@@ -1018,10 +1668,18 @@
               </div>
             ) : sp ? (
               <div className="hero"><HeroGallery species={sp} /></div>
-            ) : null}
+            ) : (
+              <div className="hero"><span className="species-emoji hero" aria-hidden>❓</span></div>
+            )}
             <div className="modal-body">
-              <h2>{sp?.name || 'Unknown species'}</h2>
+              <h2>{sp ? sp.name : 'Unidentified sighting'}</h2>
               {sp && <div className="latin-row">{sp.latin}</div>}
+
+              {unidentified && (
+                <button className="btn accent" style={{marginTop: 12}} onClick={() => onIdentify(sighting.id)}>
+                  Identify species
+                </button>
+              )}
 
               <div className="sighting-meta-row">
                 {sighting.logger && <span className="logger-chip">{sighting.logger}</span>}
@@ -1219,9 +1877,143 @@
       );
     }
 
+    // ── Identify modal (name a captured sighting) ─────────────────
+    // Shared wizard/filter step UI. wizard mode = progressive disclosure with
+    // "Step n of 4"; filter mode = all dimensions shown at once.
+    function WizardSections({ filter, setFilter, filterMode, dims }) {
+      const show = k => !dims || dims.includes(k);
+      const stepDone = {
+        group: !!filter.group, habitat: filter.habitats.size > 0,
+        size: filter.sizes.size > 0, colour: filter.colours.size > 0,
+      };
+      const allDone = stepDone.group && stepDone.habitat && stepDone.size && stepDone.colour;
+      const toggleSet = (key, value) => {
+        const next = { ...filter, [key]: new Set(filter[key]) };
+        next[key].has(value) ? next[key].delete(value) : next[key].add(value);
+        setFilter(next);
+      };
+      const setGroup = g => setFilter({ ...filter, group: filter.group === g ? null : g });
+      const lbl = n => filterMode ? '' : `Step ${n} of 4`;
+      return (
+        <div className="stack">
+          {show('group') && (
+          <Section q={filterMode ? 'Kind' : 'What kind of creature?'} step={lbl(1)} selectedLabels={filter.group ? [C.groups.find(g => g.key === filter.group)?.label].filter(Boolean) : []}>
+            <div className="options list">
+              {C.groups.map(g => (
+                <button key={g.key} className={`option ${filter.group === g.key ? 'selected' : ''}`} onClick={() => setGroup(g.key)}>
+                  <span className="e">{g.emoji}</span><span>{g.label}</span>
+                </button>
+              ))}
+            </div>
+          </Section>
+          )}
+          {show('habitat') && (filterMode || stepDone.group) && (
+            <Section q={filterMode ? 'Where' : 'Where did you see it?'} step={lbl(2)} hint="Tap any that apply" selectedLabels={[...filter.habitats].map(k => C.habitats.find(h => h.key === k)?.label).filter(Boolean)}>
+              <div className="options list">
+                {C.habitats.map(h => (
+                  <button key={h.key} className={`option ${filter.habitats.has(h.key) ? 'selected' : ''}`} onClick={() => toggleSet('habitats', h.key)}>
+                    <span className="e">{h.emoji}</span><span>{h.label}</span>
+                  </button>
+                ))}
+              </div>
+            </Section>
+          )}
+          {show('size') && (filterMode || stepDone.habitat) && (
+            <Section q={filterMode ? 'Size' : 'How big was it?'} step={lbl(3)} hint="Tap any that fit" selectedLabels={[...filter.sizes].map(k => C.sizes.find(s => s.key === k)?.label).filter(Boolean)}>
+              <div className="options list">
+                {C.sizes.map(s => (
+                  <button key={s.key} className={`option ${filter.sizes.has(s.key) ? 'selected' : ''}`} onClick={() => toggleSet('sizes', s.key)}>
+                    <div style={{display:'flex',flexDirection:'column',gap:2}}><span style={{fontWeight:600}}>{s.label}</span><span className="hint">{s.hint}</span></div>
+                  </button>
+                ))}
+              </div>
+            </Section>
+          )}
+          {(filterMode || stepDone.size) && (
+            <Section q={filterMode ? 'Colour' : 'Main colour?'} step={lbl(4)} hint="Tap any that apply" selectedLabels={[...filter.colours].map(k => C.colours.find(c => c.key === k)?.label).filter(Boolean)}>
+              <div className="options list">
+                {C.colours.map(c => (
+                  <button key={c.key} className={`option ${filter.colours.has(c.key) ? 'selected' : ''}`} onClick={() => toggleSet('colours', c.key)}>
+                    <span className="swatch" style={{background: c.swatch}}></span><span>{c.label}</span>
+                  </button>
+                ))}
+              </div>
+            </Section>
+          )}
+          {(filterMode || allDone) && (
+            <Section q={filterMode ? 'Features' : 'Any of these features?'} step={filterMode ? '' : 'Optional refinement'} hint="Useful when the list is still long" selectedLabels={filterMode ? [...filter.features].map(k => C.features.find(f => f.key === k)?.label).filter(Boolean) : []}>
+              <div className="chips">
+                {C.features.map(f => (
+                  <button key={f.key} className={`chip ${filter.features.has(f.key) ? 'active' : ''}`} onClick={() => toggleSet('features', f.key)}>{f.label}</button>
+                ))}
+              </div>
+            </Section>
+          )}
+        </div>
+      );
+    }
+
+    // Add-sighting identify: full step-by-step wizard → pick from the live shortlist.
+    function IdentifyWizardModal({ onPick, onClose, onDiscard }) {
+      const [filter, setFilter] = useState(emptyFilter);
+      const matches = useMemo(() => SPECIES.filter(s => matchesFilter(s, filter)), [filter]);
+      const started = filter.group != null;
+      return (
+        <div className="modal-wrap">
+          <div className="modal">
+            <button className="close-btn" onClick={onClose} aria-label="Close">×</button>
+            <div className="modal-body">
+              <h2 style={{marginBottom: 4}}>What did you see?</h2>
+              <p className="muted" style={{marginBottom: 12}}>Saved. Narrow it down, then tap it — or close to name later.</p>
+              <WizardSections filter={filter} setFilter={setFilter} />
+              {started && (
+                <>
+                  <div className="rank-header" style={{marginTop: 12}}>{matches.length} match{matches.length === 1 ? '' : 'es'} — tap to identify</div>
+                  {matches.length === 0 ? (
+                    <div className="empty"><div className="e">🤔</div><p className="muted">No species fit. Try removing a step.</p></div>
+                  ) : (
+                    <div className="grid">
+                      {matches.map(s => (
+                        <button key={s.id} className="species-card" onClick={() => onPick(s.id)}>
+                          <div className="photo-wrap"><SpeciesPhoto species={s} variant="card" /></div>
+                          <div className="text"><span className="name">{s.name}</span><span className="latin">{s.latin}</span></div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+              {onDiscard && <button className="btn danger" style={{marginTop: 16}} onClick={onDiscard}>Discard this capture</button>}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Browse filter panel — the dimensions NOT shown inline (size, colour, features).
+    function FilterModal({ filter, setFilter, onClose }) {
+      const matches = useMemo(() => SPECIES.filter(s => matchesFilter(s, filter)), [filter]);
+      const clearThese = () => setFilter({ ...filter, sizes: new Set(), colours: new Set(), features: new Set() });
+      return (
+        <div className="modal-wrap">
+          <div className="modal">
+            <button className="close-btn" onClick={onClose} aria-label="Close">×</button>
+            <div className="modal-body">
+              <h2 style={{marginBottom: 12}}>More filters</h2>
+              <WizardSections filter={filter} setFilter={setFilter} filterMode dims={['size', 'colour', 'features']} />
+              <div className="stack" style={{marginTop: 16}}>
+                <button className="btn accent" onClick={onClose}>Show {matches.length} species</button>
+                <button className="btn ghost" onClick={clearThese}>Clear these</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     // ── Root app ──────────────────────────────────────────────────
     function App() {
-      const [view, setView] = useState('identify');
+      const [view, setView] = useState('browse');
       const [filter, setFilter] = useState(emptyFilter);
       const [sightings, setSightings] = useState([]);
       const [selectedId, setSelectedId] = useState(null);
@@ -1230,10 +2022,19 @@
       const [settings, setSettings] = useState(loadSettings);
       const [settingsOpen, setSettingsOpen] = useState(false);
       const [syncState, setSyncState] = useState('idle'); // idle | syncing | offline
+      const [toast, setToast] = useState(null); // { text, actions: [{label, onClick}] }
+      const [pickingForId, setPickingForId] = useState(null); // sighting id awaiting a species
+      const toastTimer = useRef(null);
+
+      const showToast = (text, actions, ms = 5000) => {
+        setToast({ text, actions: actions || [] });
+        if (toastTimer.current) clearTimeout(toastTimer.current);
+        toastTimer.current = setTimeout(() => setToast(null), ms);
+      };
 
       // Lock body scroll while any full-screen modal is open so swipes don't
       // bleed through to the page underneath.
-      const anyModalOpen = !!(selectedId || loggingId || viewingSightingId || settingsOpen);
+      const anyModalOpen = !!(selectedId || loggingId || viewingSightingId || settingsOpen || pickingForId);
       useEffect(() => {
         if (!anyModalOpen) return;
         const prev = document.body.style.overflow;
@@ -1351,7 +2152,6 @@
         }
       }
 
-      const matches = useMemo(() => SPECIES.filter(s => matchesFilter(s, filter)), [filter]);
       const sightingCounts = useMemo(() => {
         const m = {};
         for (const s of sightings) m[s.speciesId] = (m[s.speciesId] || 0) + 1;
@@ -1375,37 +2175,62 @@
         setSightings(prev => prev.filter(s => s.id !== id));
         supaDeleteSighting(id).catch(e => console.warn('remote delete failed', e));
       };
+
+      // Patch an existing sighting (by id) with changes, persist, and re-push.
+      const patchSighting = async (id, changes) => {
+        const all = await dbAll().catch(() => []);
+        const found = all.find(s => s.id === id);
+        if (!found) return;
+        const updated = { ...found, ...changes, syncState: 'pending' };
+        await dbPut(updated);
+        setSightings(prev => prev.map(s => s.id === id ? updated : s));
+        pushSighting(updated);
+      };
+
+      // One-tap capture: save the moment instantly (so it's never lost), grab GPS
+      // in the background, and immediately open the identify modal to name it.
+      const quickLog = async () => {
+        const id = uid();
+        await saveSighting({
+          id, speciesId: null,
+          dateISO: new Date().toISOString(),
+          lat: null, lon: null, accuracy: null,
+          notes: '', photoBlob: null,
+        });
+        setPickingForId(id);
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            pos => patchSighting(id, { lat: pos.coords.latitude, lon: pos.coords.longitude, accuracy: pos.coords.accuracy }),
+            () => {},
+            { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+          );
+        }
+      };
+
+      const assignSpecies = (id, speciesId) => patchSighting(id, { speciesId });
+
       const selected = selectedId ? speciesById(selectedId) : null;
       const logging  = loggingId  ? speciesById(loggingId)  : null;
 
       return (
         <div className="app">
-          <header className="header">
-            <div style={{fontSize: 28, lineHeight: 1}}>🦅</div>
-            <div className="grow">
-              <h1>Skye Wildlife</h1>
-              <div className="sub">
-                {settings.logger || 'A field pokedex for your trip'}
-                {syncState === 'syncing' && ' · syncing…'}
-                {syncState === 'offline' && ' · offline'}
+          {view !== 'browse' && (
+            <header className="header">
+              <div style={{fontSize: 28, lineHeight: 1}}>🦅</div>
+              <div className="grow">
+                <h1>Skye Wildlife</h1>
+                <div className="sub">
+                  {settings.logger || 'A field pokedex for your trip'}
+                  {syncState === 'syncing' && ' · syncing…'}
+                  {syncState === 'offline' && ' · offline'}
+                </div>
               </div>
-            </div>
-            <button className="settings-btn" onClick={() => setSettingsOpen(true)} aria-label="Settings">⚙</button>
-          </header>
+              <button className="settings-btn" onClick={() => setSettingsOpen(true)} aria-label="Settings">⚙</button>
+            </header>
+          )}
 
           <Tabs view={view} setView={setView} sightingCount={sightings.length} />
 
-          {view === 'identify' && (
-            <IdentifyView
-              filter={filter}
-              setFilter={setFilter}
-              matchCount={matches.length}
-              onShowMatches={() => setView('browse')}
-            />
-          )}
-          {view === 'identify' && filter.group && (
-            <ShowMatchesCta matchCount={matches.length} onClick={() => setView('browse')} />
-          )}
           {view === 'browse' && (
             <BrowseView
               filter={filter}
@@ -1444,6 +2269,7 @@
                 onClose={() => setViewingSightingId(null)}
                 onDelete={deleteSighting}
                 onOpenSpecies={setSelectedId}
+                onIdentify={id => { setViewingSightingId(null); setPickingForId(id); }}
               />
             ) : null;
           })()}
@@ -1453,6 +2279,27 @@
               onClose={() => setSettingsOpen(false)}
               onSave={s => { setSettings(s); saveSettings(s); }}
             />
+          )}
+          {pickingForId && (
+            <IdentifyWizardModal
+              onPick={speciesId => { const id = pickingForId; assignSpecies(id, speciesId); setPickingForId(null); showToast('Identified ✓'); setViewingSightingId(id); }}
+              onClose={() => setPickingForId(null)}
+              onDiscard={() => { deleteSighting(pickingForId); setPickingForId(null); showToast('Capture discarded'); }}
+            />
+          )}
+
+          {!anyModalOpen && (
+            <button className="capture-fab" onClick={quickLog} aria-label="Quick-log a sighting">
+              <span className="capture-fab-icon">+</span>
+            </button>
+          )}
+          {toast && (
+            <div className="toast">
+              <span className="toast-text">{toast.text}</span>
+              {toast.actions.map((a, i) => (
+                <button key={i} className="toast-action" onClick={a.onClick}>{a.label}</button>
+              ))}
+            </div>
           )}
         </div>
       );
