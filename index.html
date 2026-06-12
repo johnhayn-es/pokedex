@@ -346,11 +346,6 @@
     .seg-toggle button.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.12); font-weight: 600; }
 
     /* Spotting tier chips + planner */
-    .tier-chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; vertical-align: 1px; }
-    .tier-good { background: var(--accent); color: var(--inverse); }
-    .tier-fair { background: transparent; border: 1px solid var(--ink-4); color: var(--ink-2); }
-    .tier-poor { background: var(--line); color: var(--ink-3); }
-    .tier-unknown { background: var(--line); color: var(--ink-4); }
     /* Consolidated "best chance to spot" card (when + where) */
     .spot-card { padding: 15px; border-radius: 14px; border: 0; background: var(--surface); margin: 12px 0 14px; }
     .spot-card-title { font-size: 13px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
@@ -362,12 +357,10 @@
     .rank-header { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-4); margin: 12px 0 4px; }
     .unlikely-toggle { width: 100%; text-align: center; padding: 11px; margin-top: 8px; color: var(--ink-3); font-size: 13px; font-weight: 600; background: var(--surface); border: 0; border-radius: 13px; }
 
-    /* Browse weather/time bar */
-    .spot-bar-wrap { display: flex; flex-direction: column; gap: 6px; }
+    /* Browse header: time toggle, search, filters — kept tight together */
+    .browse-header { display: flex; flex-direction: column; gap: 8px; }
     .spot-presets { overflow-x: auto; }
     .spot-presets button { white-space: nowrap; }
-
-    /* Browse search + filter row */
     .browse-controls { display: flex; gap: 8px; align-items: stretch; }
     .browse-controls .search-bar { flex: 1; }
     .filter-btn {
@@ -376,25 +369,11 @@
       background: var(--surface); border: 0; color: var(--ink-2);
     }
     .filter-btn.on { background: var(--accent); color: var(--inverse); }
-
-    /* Always-visible type + where filter strips */
-    .filter-row { display: flex; align-items: center; gap: 10px; }
-    .filter-label { flex-shrink: 0; width: 44px; font-size: 12px; font-weight: 600; color: var(--ink-3); }
-    .filter-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; flex: 1; }
+    .filter-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
     .filter-strip .chip { white-space: nowrap; flex-shrink: 0; padding: 11px 15px; font-size: 14px; }
+    .browse-credit { font-size: 11px; text-align: center; color: var(--ink-4); margin-top: 10px; }
 
-    /* Card score chip + dim */
     .species-card.dim { opacity: 0.45; }
-    .card-tier {
-      position: absolute; left: 8px; top: 8px; z-index: 1;
-      width: 22px; height: 22px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; line-height: 1;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-    }
-    .card-tier.tier-good { background: var(--accent); color: var(--inverse); }
-    .card-tier.tier-fair { background: var(--surface); color: var(--ink-2); border: 1px solid var(--ink-4); }
-    .card-tier.tier-poor { background: var(--ink-4); color: var(--surface); }
 
     /* Per-species map disclosure */
     .map-note { font-size: 14px; color: var(--ink-2); padding: 13px 15px; background: var(--surface); border: 0; border-radius: 13px; line-height: 1.5; }
@@ -1259,23 +1238,22 @@
 
       return (
         <div className="stack">
-          <SpotTimeBar presets={presets} spotISO={spotISO} cond={cond} wxState={wxState} onPick={setSpotISO} />
-          <div className="browse-controls">
-            <div className="search-bar grow">
-              <span className="search-icon" aria-hidden>🔍</span>
-              <input
-                type="search" className="search-input" value={query}
-                onChange={e => setQuery(e.target.value)} placeholder="Search 70 species…"
-                autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false}
-              />
-              {query && <button className="search-clear" onClick={() => setQuery('')} aria-label="Clear search">×</button>}
+          <div className="browse-header">
+            <div className="browse-controls">
+              <div className="search-bar grow">
+                <span className="search-icon" aria-hidden>🔍</span>
+                <input
+                  type="search" className="search-input" value={query}
+                  onChange={e => setQuery(e.target.value)} placeholder="Search 70 species…"
+                  autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck={false}
+                />
+                {query && <button className="search-clear" onClick={() => setQuery('')} aria-label="Clear search">×</button>}
+              </div>
+              <button className={`filter-btn ${moreCount ? 'on' : ''}`} onClick={() => setFilterOpen(true)}>
+                ⚙ {moreCount ? moreCount : 'More'}
+              </button>
             </div>
-            <button className={`filter-btn ${moreCount ? 'on' : ''}`} onClick={() => setFilterOpen(true)}>
-              ⚙ {moreCount ? moreCount : 'More'}
-            </button>
-          </div>
-          <div className="filter-row">
-            <span className="filter-label">Type</span>
+            <SpotTimeBar presets={presets} spotISO={spotISO} wxState={wxState} onPick={setSpotISO} />
             <div className="filter-strip">
               {C.groups.map(g => (
                 <button key={g.key} className={`chip ${filter.group === g.key ? 'active' : ''}`} onClick={() => setFilter({ ...filter, group: filter.group === g.key ? null : g.key })}>
@@ -1283,9 +1261,6 @@
                 </button>
               ))}
             </div>
-          </div>
-          <div className="filter-row">
-            <span className="filter-label">Where</span>
             <div className="filter-strip">
               {C.habitats.map(h => (
                 <button key={h.key} className={`chip ${filter.habitats.has(h.key) ? 'active' : ''}`} onClick={() => toggleHabitat(h.key)}>
@@ -1331,6 +1306,7 @@
             <div className="grid">{matches.map(s => renderSpeciesCard(s, null, sightingCounts, onSelect, false))}</div>
           )}
 
+          {scores && <div className="browse-credit">Ranked by conditions · Open-Meteo</div>}
           {filterOpen && <FilterModal filter={filter} setFilter={setFilter} onClose={() => setFilterOpen(false)} />}
         </div>
       );
@@ -1349,22 +1325,14 @@
       );
     }
 
-    // Always-on best-chance time control (Now / +3h / +6h) + weather summary.
-    function SpotTimeBar({ presets, spotISO, cond, wxState, onPick }) {
-      const H = cond && cond.forecast && cond.forecast.hourly;
-      const i = H ? H.time.indexOf(spotISO) : -1;
-      const summary = wxState === 'loading' ? 'Checking conditions…'
-        : wxState === 'offline' ? '📡 No signal — showing the full list (can\'t rank by conditions).'
-        : i >= 0 ? `Best chance · ${Math.round(H.temperature_2m[i])}°, wind ${Math.round(H.wind_speed_10m[i])} km/h, ${H.precipitation_probability[i]}% rain · Open-Meteo`
-        : 'Best chance';
+    // Always-on best-chance time control (Now / +3h / +6h).
+    function SpotTimeBar({ presets, spotISO, wxState, onPick }) {
+      if (wxState === 'offline') return null;
       return (
-        <div className="spot-bar-wrap">
-          <div className="seg-toggle spot-presets">
-            {presets.map(p => (
-              <button key={p.iso} className={spotISO === p.iso ? 'active' : ''} onClick={() => onPick(p.iso)}>{p.label}</button>
-            ))}
-          </div>
-          <div className="muted" style={{fontSize:12}}>{summary}</div>
+        <div className="seg-toggle spot-presets">
+          {presets.map(p => (
+            <button key={p.iso} className={spotISO === p.iso ? 'active' : ''} onClick={() => onPick(p.iso)}>{p.label}</button>
+          ))}
         </div>
       );
     }
@@ -1474,14 +1442,7 @@
       return src ? <img src={src} alt="" /> : null;
     }
 
-    // ── Best-chance-today planner (per species, lazy on expand) ───
-    function fmtSpotHour(iso) {
-      const d = new Date(iso); const t0 = new Date(); t0.setHours(0, 0, 0, 0);
-      const dd = new Date(d); dd.setHours(0, 0, 0, 0);
-      const day = dd.getTime() === t0.getTime() ? 'today' : 'tomorrow';
-      const p = n => String(n).padStart(2, '0');
-      return `${day} ${p(d.getHours())}:${p(d.getMinutes())}`;
-    }
+    // ── Best-chance-to-spot card (per species) ────────────────────
     const SPOT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     function roughHour(iso) {
       const d = new Date(iso);
