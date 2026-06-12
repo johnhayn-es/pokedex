@@ -101,18 +101,19 @@
     .card:not(img):not(.species-photo):not(.species-emoji) { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
     /* Belt-and-braces reset for our photo classes in case anything else inherits */
     .species-photo, .species-emoji { padding: 0; border-radius: 0; border: 0; background: transparent; }
-    .stack > * + * { margin-top: 10px; }
+    .stack > * + * { margin-top: 12px; }
     .row { display: flex; align-items: center; gap: 10px; }
     .grow { flex: 1; min-width: 0; }
     .muted { color: var(--ink-3); font-size: 13px; }
 
     .chip {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 11px; border-radius: 999px;
-      background: var(--surface); border: 1px solid var(--line);
+      padding: 7px 12px; border-radius: 999px;
+      background: var(--surface); border: 0;
       font-size: 13px; font-weight: 500; color: var(--ink-2);
+      transition: background 0.15s ease, color 0.15s ease;
     }
-    .chip.active { background: var(--accent); color: var(--inverse); border-color: var(--accent); }
+    .chip.active { background: var(--accent); color: var(--inverse); }
     .chip .x { font-size: 14px; opacity: 0.75; margin-left: 2px; }
 
     .chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -120,8 +121,8 @@
     /* Search bar on Browse */
     .search-bar {
       display: flex; align-items: center; gap: 8px;
-      background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-      padding: 0 12px;
+      background: var(--surface); border: 0; border-radius: 13px;
+      padding: 0 14px;
     }
     .search-bar .search-icon { font-size: 15px; opacity: 0.6; flex-shrink: 0; }
     .search-input {
@@ -162,15 +163,18 @@
     .option.selected { border-color: var(--accent); background: var(--accent-soft); }
 
     /* Species grid */
-    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
     @media (min-width: 600px) { .grid { grid-template-columns: repeat(3, 1fr); } }
     .species-card {
       display: flex; flex-direction: column; align-items: stretch;
-      padding: 0; border-radius: 14px; overflow: hidden;
+      padding: 0; border-radius: 16px; overflow: hidden;
       background: var(--surface);
-      border: 1px solid var(--line);
+      border: 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 10px 24px rgba(0,0,0,0.08);
       text-align: left;
+      transition: transform 0.13s ease, box-shadow 0.13s ease;
     }
+    .species-card:active { transform: scale(0.985); }
     .species-card .photo-wrap {
       width: 100%; aspect-ratio: 1/1;
       background: var(--surface-2);
@@ -183,9 +187,9 @@
       display: block;
     }
     .species-card .species-emoji.card { font-size: 40px; line-height: 1; opacity: 0.5; }
-    .species-card .text { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 2px; }
-    .species-card .name { font-weight: 600; font-size: 15px; }
-    .species-card .latin { font-size: 11px; color: var(--ink-4); }
+    .species-card .text { padding: 11px 13px 13px; display: flex; flex-direction: column; gap: 3px; }
+    .species-card .name { font-weight: 600; font-size: 15px; line-height: 1.25; }
+    .species-card .latin { font-size: 11.5px; color: var(--ink-4); }
     .modal .hero {
       width: 100%;
       background: var(--surface-2);
@@ -245,15 +249,16 @@
     /* Primary action button */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 12px 16px; border-radius: 12px;
+      padding: 13px 16px; border-radius: 13px;
       background: var(--ink); color: var(--inverse);
       font-weight: 600; font-size: 15px; width: 100%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.14);
     }
-    .btn.secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
-    .btn.ghost { background: transparent; color: var(--ink-2); }
-    .btn.danger { background: transparent; color: var(--warn); border: 1px solid var(--line); }
+    .btn.secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+    .btn.ghost { background: transparent; color: var(--ink-2); box-shadow: none; }
+    .btn.danger { background: transparent; color: var(--warn); border: 1px solid var(--line); box-shadow: none; }
     .btn.accent { background: var(--accent); color: var(--inverse); }
-    .btn:disabled { opacity: 0.4; }
+    .btn:disabled { opacity: 0.4; box-shadow: none; }
 
     /* Step header */
     .step-h {
@@ -305,13 +310,14 @@
     .modal .latin-row { font-size: 14px; color: var(--ink-4); margin-bottom: 14px; }
     .modal .field-label { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 6px; display: block; }
     .modal .desc { font-size: 16px; color: var(--ink-2); margin: 10px 0 14px; line-height: 1.6; }
-    .modal .where, .modal .fact { font-size: 14px; color: var(--ink-2); padding: 12px 14px; background: var(--surface); border-radius: 12px; border: 1px solid var(--line); margin-bottom: 10px; }
+    .modal .where, .modal .fact { font-size: 14px; color: var(--ink-2); padding: 13px 15px; background: var(--surface); border-radius: 13px; border: 0; margin-bottom: 10px; }
     .modal .where strong, .modal .fact strong { display: block; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 4px; }
 
     /* Sightings */
     .sighting {
       display: flex; gap: 12px; padding: 12px;
-      border-radius: 12px; background: var(--surface); border: 1px solid var(--line);
+      border-radius: 14px; background: var(--surface); border: 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 8px 20px rgba(0,0,0,0.06);
       text-align: left; width: 100%; color: inherit; font: inherit;
     }
     .sighting:active { transform: scale(0.99); }
@@ -335,28 +341,26 @@
     .leaflet-container a { color: var(--accent); }
 
     /* List/Map segmented toggle */
-    .seg-toggle { display: flex; gap: 4px; padding: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
-    .seg-toggle button { flex: 1; padding: 12px; border-radius: 9px; font-size: 15px; font-weight: 500; color: var(--ink-3); background: transparent; }
-    .seg-toggle button.active { background: var(--ink); color: var(--inverse); }
+    .seg-toggle { display: flex; gap: 4px; padding: 4px; background: var(--surface-2); border: 0; border-radius: 14px; }
+    .seg-toggle button { flex: 1; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: 500; color: var(--ink-3); background: transparent; transition: background 0.15s ease, color 0.15s ease; }
+    .seg-toggle button.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.12); font-weight: 600; }
 
     /* Spotting tier chips + planner */
-    .tier-chip { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; vertical-align: 1px; }
-    .tier-good { background: var(--accent-soft); color: var(--accent-2); }
+    .tier-chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; vertical-align: 1px; }
+    .tier-good { background: var(--accent); color: var(--inverse); }
     .tier-fair { background: transparent; border: 1px solid var(--ink-4); color: var(--ink-2); }
     .tier-poor { background: var(--line); color: var(--ink-3); }
     .tier-unknown { background: var(--line); color: var(--ink-4); }
-    /* Prominent best-chance card at the top of the species view */
-    .spot-card { padding: 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); margin: 12px 0 14px; }
-    .spot-card.tierbg-good { border-color: var(--accent); background: var(--accent-soft); }
-    .spot-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .spot-card-title { font-size: 13px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink-3); }
-    .spot-card.tierbg-good .spot-card-title { color: var(--accent-2); }
-    .spot-verdict { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
-    .spot-line { font-size: 14px; margin-top: 2px; }
+    /* Consolidated "best chance to spot" card (when + where) */
+    .spot-card { padding: 15px; border-radius: 14px; border: 0; background: var(--surface); margin: 12px 0 14px; }
+    .spot-card-title { font-size: 13px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+    .spot-row { display: flex; gap: 12px; margin-top: 9px; }
+    .spot-row-label { flex-shrink: 0; width: 46px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-4); padding-top: 3px; }
+    .spot-row-value { flex: 1; font-size: 15px; line-height: 1.5; color: var(--ink); }
 
     /* Browse ranked-filter section headers + show-unlikely toggle */
-    .rank-header { font-size: 13px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--ink-3); margin: 4px 0 2px; }
-    .unlikely-toggle { width: 100%; text-align: center; padding: 10px; margin-top: 8px; color: var(--ink-3); font-size: 13px; font-weight: 600; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+    .rank-header { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-4); margin: 12px 0 4px; }
+    .unlikely-toggle { width: 100%; text-align: center; padding: 11px; margin-top: 8px; color: var(--ink-3); font-size: 13px; font-weight: 600; background: var(--surface); border: 0; border-radius: 13px; }
 
     /* Browse weather/time bar */
     .spot-bar-wrap { display: flex; flex-direction: column; gap: 6px; }
@@ -368,16 +372,16 @@
     .browse-controls .search-bar { flex: 1; }
     .filter-btn {
       flex-shrink: 0; display: flex; align-items: center; gap: 4px;
-      padding: 0 14px; border-radius: 12px; font-size: 14px; font-weight: 600;
-      background: var(--surface); border: 1px solid var(--line); color: var(--ink-2);
+      padding: 0 16px; border-radius: 13px; font-size: 14px; font-weight: 600;
+      background: var(--surface); border: 0; color: var(--ink-2);
     }
-    .filter-btn.on { background: var(--accent); color: var(--inverse); border-color: var(--accent); }
+    .filter-btn.on { background: var(--accent); color: var(--inverse); }
 
     /* Always-visible type + where filter strips */
     .filter-row { display: flex; align-items: center; gap: 10px; }
     .filter-label { flex-shrink: 0; width: 44px; font-size: 12px; font-weight: 600; color: var(--ink-3); }
     .filter-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; flex: 1; }
-    .filter-strip .chip { white-space: nowrap; flex-shrink: 0; padding: 11px 15px; font-size: 14px; border-radius: 12px; }
+    .filter-strip .chip { white-space: nowrap; flex-shrink: 0; padding: 11px 15px; font-size: 14px; }
 
     /* Card score chip + dim */
     .species-card.dim { opacity: 0.45; }
@@ -393,14 +397,14 @@
     .card-tier.tier-poor { background: var(--ink-4); color: var(--surface); }
 
     /* Per-species map disclosure */
-    .map-note { font-size: 14px; color: var(--ink-2); padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; line-height: 1.5; }
+    .map-note { font-size: 14px; color: var(--ink-2); padding: 13px 15px; background: var(--surface); border: 0; border-radius: 13px; line-height: 1.5; }
     .map-caption { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-top: 6px; }
     .map-caption .muted { font-size: 12px; }
     .link-btn { flex-shrink: 0; color: var(--accent); font-size: 13px; font-weight: 600; background: none; padding: 0; }
     .map-disclosure { margin-top: 8px; }
     .disclosure-row {
       width: 100%; display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+      padding: 13px 15px; background: var(--surface); border: 0; border-radius: 13px;
       font-size: 14px; font-weight: 600; color: var(--ink); text-align: left;
     }
     .disclosure-caret { color: var(--ink-3); font-size: 18px; }
@@ -1301,13 +1305,13 @@
             <>
               {likelyGood.length > 0 && (
                 <>
-                  <div className="rank-header">Good chance</div>
+                  <div className="rank-header">Good chance of sighting</div>
                   <div className="grid">{likelyGood.map(s => renderSpeciesCard(s, scores, sightingCounts, onSelect, false))}</div>
                 </>
               )}
               {likelyFair.length > 0 && (
                 <>
-                  <div className="rank-header">Worth a look</div>
+                  <div className="rank-header">Fair chance of sighting</div>
                   <div className="grid">{likelyFair.map(s => renderSpeciesCard(s, scores, sightingCounts, onSelect, false))}</div>
                 </>
               )}
@@ -1333,11 +1337,9 @@
     }
 
     function renderSpeciesCard(s, scores, sightingCounts, onSelect, dim) {
-      const sc = scores && scores[s.id];
       return (
         <button key={s.id} className={`species-card ${sightingCounts[s.id] ? 'seen' : ''} ${dim ? 'dim' : ''}`} onClick={() => onSelect(s.id)}>
           {sightingCounts[s.id] ? <span className="seen-dot" title={`${sightingCounts[s.id]} sighting${sightingCounts[s.id] === 1 ? '' : 's'}`}></span> : null}
-          {sc && sc.tier !== 'unknown' && <span className={`card-tier tier-${sc.tier}`} title={sc.reason}>{sc.tier === 'good' ? '✓' : sc.tier === 'fair' ? '~' : '✗'}</span>}
           <div className="photo-wrap"><SpeciesPhoto species={s} variant="card" /></div>
           <div className="text">
             <span className="name">{s.name}</span>
@@ -1480,58 +1482,56 @@
       const p = n => String(n).padStart(2, '0');
       return `${day} ${p(d.getHours())}:${p(d.getMinutes())}`;
     }
-    function TierChip({ tier }) {
-      const label = tier === 'good' ? 'Good' : tier === 'fair' ? 'Fair' : tier === 'unknown' ? '—' : 'Poor';
-      return <span className={`tier-chip tier-${tier}`}>{label}</span>;
+    const SPOT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    function roughHour(iso) {
+      const d = new Date(iso);
+      let h = d.getHours() + (d.getMinutes() >= 30 ? 1 : 0);
+      const ampm = (h % 24) >= 12 ? 'pm' : 'am';
+      let hh = h % 12; if (hh === 0) hh = 12;
+      return `~${hh}${ampm}`;
+    }
+    function seasonRange(sp) {
+      const w = SEASON[sp.id];
+      return w ? `${SPOT_MONTHS[w[0] - 1]}–${SPOT_MONTHS[w[1] - 1]}` : null;
+    }
+    // Simple "when to look" timing — daylight window / dawn-&-dusk / warm hours,
+    // gated by season. No weather conditions.
+    function spotTiming(species, sun) {
+      const month = new Date().getMonth() + 1;
+      if (SEASON[species.id] && seasonGate(species, month) !== 1) {
+        const r = seasonRange(species);
+        return r ? `Out of season — best ${r}` : 'Out of season just now';
+      }
+      if (CREPUSCULAR.has(species.id)) return `Today at dawn (${roughHour(sun.sunrise)}) & dusk (${roughHour(sun.sunset)})`;
+      if (species.group === 'reptile' || species.group === 'insect') return 'Warm, sunny hours of the day';
+      return `Today, until ${roughHour(sun.sunset)}`;
     }
     function SpotPlanner({ species }) {
-      const [state, setState] = useState('loading'); // loading | ready | offline
-      const [result, setResult] = useState(null);
-      const needMarine = REGIME[regimeOf(species)].sea === 1;
+      const [sun, setSun] = useState(null);
 
       useEffect(() => {
         let cancelled = false;
-        setState('loading');
-        fetchConditions(57.3, -6.2, needMarine).then(cond => {
+        fetchConditions(57.3, -6.2, false).then(cond => {
           if (cancelled) return;
-          if (!cond.forecast) { setState('offline'); return; }
-          const month = new Date().getMonth() + 1;
-          const now = scoreSpecies(species, cond, localHourISO(new Date()), month);
-          const best = bestWindow(species, cond, month);
-          setResult({ now, best, stale: cond.stale });
-          setState('ready');
+          if (cond.forecast && cond.forecast.daily) setSun({ sunrise: cond.forecast.daily.sunrise[0], sunset: cond.forecast.daily.sunset[0] });
         });
         return () => { cancelled = true; };
       // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [species.id]);
 
-      const best = result && result.best;
-      const tier = best ? best.tier : 'unknown';
-      const verdict = best
-        ? (best.tier === 'good' ? `Good conditions around ${fmtSpotHour(best.iso)}`
-          : best.tier === 'fair' ? `Fair at best — try ${fmtSpotHour(best.iso)}`
-          : best.reason === 'Out of season' ? 'Out of season just now'
-          : 'Not really worth heading out for today')
-        : '';
-
       return (
-        <div className={`spot-card tierbg-${tier}`}>
-          <div className="spot-card-head">
-            <span className="spot-card-title">⭐ Best chance today</span>
-            {state === 'ready' && <TierChip tier={tier} />}
-          </div>
-          {state === 'loading' && <div className="muted">Checking the forecast…</div>}
-          {state === 'offline' && <div className="muted">📡 No signal — showing general guidance only.</div>}
-          {state === 'ready' && result && (
-            <>
-              <div className="spot-verdict">{verdict}</div>
-              {best && best.reason && <div className="spot-line">{best.reason}</div>}
-              {result.now && result.now.score != null && <div className="spot-line muted">Right now: {result.now.reason}</div>}
-              <div className="muted" style={{ fontSize: 12, marginTop: 8 }}>
-                Scores conditions for looking, not whether it's there. Open-Meteo{result.stale ? ' · saved snapshot' : ''}.{(species.habitats || []).some(h => h === 'mountain' || h === 'sky' || h === 'sea') ? ' Mountain & sea forecasts are rough — trust your eyes.' : ''}
-              </div>
-            </>
+        <div className="spot-card">
+          <div className="spot-card-title">⭐ Best chance to spot</div>
+          {sun && (
+            <div className="spot-row">
+              <span className="spot-row-label">When</span>
+              <span className="spot-row-value">{spotTiming(species, sun)}</span>
+            </div>
           )}
+          <div className="spot-row">
+            <span className="spot-row-label">Where</span>
+            <span className="spot-row-value">{species.where}</span>
+          </div>
         </div>
       );
     }
@@ -1575,7 +1575,7 @@
                 <>
                   {allObscured && !showApprox ? (
                     <div className="map-note">
-                      Exact locations are protected for this species, so they aren't pinned. {data.total} record{data.total === 1 ? '' : 's'} logged near Skye in the last 24 months — see <strong>Where to look</strong> above for the best spots.
+                      Exact locations are protected for this species, so they aren't pinned. {data.total} record{data.total === 1 ? '' : 's'} logged near Skye in the last 24 months — see the <strong>Where</strong> tip above for the best spots.
                     </div>
                   ) : (
                     <LeafletMap points={shown} fit="skye" className="sighting-map" accent="#166534" />
@@ -1614,7 +1614,6 @@
               <div className="latin-row">{species.latin}</div>
               <SpotPlanner species={species} />
               <p className="desc">{species.description}</p>
-              <div className="where"><strong>Where to look</strong>{species.where}</div>
               <div className="fact"><strong>Did you know</strong>{species.fact}</div>
               <SpeciesSightingsMap species={species} />
               <div style={{marginTop: 14}} className="stack">
