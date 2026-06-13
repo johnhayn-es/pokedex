@@ -942,11 +942,11 @@
       if (wxInFlight.has(key)) return wxInFlight.get(key);
       const p = (async () => {
         try {
-          const fUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation,precipitation_probability,cloud_cover,wind_speed_10m,wind_gusts_10m,visibility,weather_code,is_day,shortwave_radiation&daily=sunrise,sunset&timezone=auto&forecast_days=2`;
+          const fUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation,precipitation_probability,cloud_cover,wind_speed_10m,wind_gusts_10m,visibility,weather_code,is_day,shortwave_radiation&daily=sunrise,sunset&timezone=auto&forecast_days=7`;
           const forecast = await fetch(fUrl).then(r => { if (!r.ok) throw new Error('wx'); return r.json(); });
           let marine = null;
           if (needMarine) {
-            const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${SEA_COORD[0]}&longitude=${SEA_COORD[1]}&hourly=wave_height,sea_level_height_msl&timezone=auto&forecast_days=2`;
+            const mUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${SEA_COORD[0]}&longitude=${SEA_COORD[1]}&hourly=wave_height,sea_level_height_msl&timezone=auto&forecast_days=7`;
             marine = await fetch(mUrl).then(r => r.ok ? r.json() : null).catch(() => null);
           }
           const out = { fetchedAt: new Date().toISOString(), forecast, marine };
@@ -1998,6 +1998,39 @@
       );
     }
 
+    // ── Prepare everything for offline use ────────────────────────
+    // Warm the weather, every species' lead photo (into the SW image cache),
+    // and every species' iNaturalist hotspot data (into localStorage) so the
+    // whole app works on patchy/no signal. Gentle + gated to ~once a day.
+    const PRECACHE_KEY = 'skye-precache-at';
+    let _precacheRunning = false;
+    async function precacheForOffline(force) {
+      if (_precacheRunning || !navigator.onLine) return;
+      const last = +(localStorage.getItem(PRECACHE_KEY) || 0);
+      if (!force && Date.now() - last < 20 * 3600e3) return;
+      _precacheRunning = true;
+      const sleep = ms => new Promise(r => setTimeout(r, ms));
+      try {
+        // Weather (with marine) for the trip window — powers best-chance offline.
+        try { await fetchConditions(57.3, -6.2, true); } catch {}
+        // Lead photo for every species (the SW caches the image bytes).
+        for (const s of SPECIES) {
+          if (!navigator.onLine) return;
+          try { const u = await fetchSpeciesPhoto(s.id); if (u) await fetch(u).catch(() => {}); } catch {}
+          await sleep(150);
+        }
+        // iNaturalist hotspot data for every species (cached to localStorage).
+        for (const s of SPECIES) {
+          if (!navigator.onLine) return;
+          try { await fetchSpeciesObservations(s.latin); } catch {}
+          await sleep(1200); // stay well under iNat's ~60 req/min
+        }
+        localStorage.setItem(PRECACHE_KEY, String(Date.now()));
+      } finally {
+        _precacheRunning = false;
+      }
+    }
+
     // ── Root app ──────────────────────────────────────────────────
     function App() {
       const [view, setView] = useState('browse');
@@ -2052,6 +2085,15 @@
           for (const s of local) if (s.syncState !== 'synced') pushSighting(s).catch(() => {});
         })();
       // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+
+      // Quietly cache everything for offline once the app has settled, and again
+      // whenever signal returns.
+      useEffect(() => {
+        const t = setTimeout(() => precacheForOffline().catch(() => {}), 4000);
+        const onOnline = () => precacheForOffline().catch(() => {});
+        window.addEventListener('online', onOnline);
+        return () => { clearTimeout(t); window.removeEventListener('online', onOnline); };
       }, []);
 
       // Refresh when tab becomes visible
